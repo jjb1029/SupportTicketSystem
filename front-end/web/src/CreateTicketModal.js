@@ -11,6 +11,7 @@ const CreateTicketModal = ({onClose}) => {
             padding: '20px',
             border: '1px solid #ccc',
             zIndex: 1000,
+            opacity: .7,
         }}>
             <h2>Create Ticket</h2>
             <p>This is a placeholder modal</p>
