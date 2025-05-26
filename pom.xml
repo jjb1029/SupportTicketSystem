@@ -10,10 +10,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.jorden</groupId>
-	<artifactId>WorkScheduler</artifactId>
+	<artifactId>SupportTicketSystem</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>WorkScheduler</name>
+	<name>SupportTicketSystem</name>
 	<description>Work Order Scheduling system</description>
 	<properties>
 		<java.version>17</java.version>

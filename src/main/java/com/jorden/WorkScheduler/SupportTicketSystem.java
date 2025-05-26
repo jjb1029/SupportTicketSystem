@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WorkSchedulerApplication {
+public class SupportTicketSystem {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WorkSchedulerApplication.class, args);
+		SpringApplication.run(SupportTicketSystem.class, args);
 		
 /*		
 		User user1 = new User("Jorden", "Burchick", "jordenburchick@gmail.com", "technician", "jburch");
