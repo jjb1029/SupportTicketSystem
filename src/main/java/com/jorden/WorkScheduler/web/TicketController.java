@@ -43,6 +43,7 @@ public class TicketController {
 		System.out.println("DTO: " + dto);
 		System.out.println("creatorUsername: " + dto.getCreatorUsername());
 		System.out.println("handlerUsername: " + dto.getHandlerUsername());
+		System.out.println("ticket title: " + dto.getTicketTitle());
 		
 		
 		System.out.println("Attempting to create ticket");
@@ -57,8 +58,8 @@ public class TicketController {
 		}
 		
 		// build ticket based on DTO info and save it to the repository
-		System.out.println("Description of ticket: " + dto.getDescription());
-		Ticket ticket = new Ticket(dto.getDescription(), creator.get());
+		System.out.println("Description of ticket: " + dto.getTicketDescription());
+		Ticket ticket = new Ticket(dto. getTicketTitle(), dto.getTicketDescription(), creator.get());
 		ticketRepository.save(ticket);
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(ticket);

@@ -17,6 +17,7 @@ public class Ticket {
 	private TicketStatus ticketStatus; // open, in progress, closed
 	@Column(name = "ticket_description")
 	private String ticketDescription; // text
+	@Column(name = "ticket_title")
 	private String ticketTitle; // short summary
 	@ManyToOne(optional=false)
 	private User ticketCreator; // creator of the ticket
@@ -31,7 +32,8 @@ public class Ticket {
 		
 	}
 	
-	public Ticket(String ticketDescription, User ticketCreator) {
+	public Ticket(String ticketTitle, String ticketDescription, User ticketCreator) {
+		this.ticketTitle = ticketTitle;
 		this.ticketStatus = TicketStatus.OPEN; // once a ticket is created, it can only be open
 		this.ticketDescription = ticketDescription;
 		this.ticketCreator = ticketCreator;
@@ -47,6 +49,14 @@ public class Ticket {
 
 	public void setTicketStatus(TicketStatus ticketStatus) {
 		this.ticketStatus = ticketStatus;
+	}
+	
+	public String getTicketTitle() {
+		return this.ticketTitle;
+	}
+	
+	public void setTicketTitle(String ticketTitle) {
+		this.ticketTitle = ticketTitle;
 	}
 
 	public String getTicketDescription() {

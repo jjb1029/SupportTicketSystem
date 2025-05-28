@@ -2,7 +2,8 @@ package com.jorden.WorkScheduler.dto;
 
 public class CreateTicketRequest {
 
-	private String description;
+	private String ticketTitle;
+	private String ticketDescription;
 	private String creatorUsername;
 	private String handlerUsername;
 	
@@ -10,18 +11,27 @@ public class CreateTicketRequest {
 		
 	}
 	
-	public CreateTicketRequest(String description, String creatorUsername, String handlerUsername) {
-		this.description = description;
+	public CreateTicketRequest(String title, String description, String creatorUsername, String handlerUsername) {
+		this.ticketTitle = title;
+		this.ticketDescription = description;
 		this.creatorUsername = creatorUsername;
 		this.handlerUsername = "N/A";
 	}
 	
-	public void setDescription(String desc) {
-		this.description = desc;
+	public void setTicketTitle(String title) {
+		this.ticketTitle = title;
 	}
 	
-	public String getDescription() {
-		return this.description;
+	public String getTicketTitle() {
+		return this.ticketTitle;
+	}
+	
+	public void setTicketDescription(String desc) {
+		this.ticketDescription = desc;
+	}
+	
+	public String getTicketDescription() {
+		return this.ticketDescription;
 	}
 	
 	public void setCreatorUsername(String username) {

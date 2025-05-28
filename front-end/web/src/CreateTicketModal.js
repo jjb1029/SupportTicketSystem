@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-const CreateTicketModal = ({onClose}) => {
+const CreateTicketModal = ({onClose, onTicketCreated}) => {
     const[ticketTitle, setTicketTitle] = useState('');
     const[ticketDescription, setTicketDescription] = useState('')
 
@@ -18,6 +18,10 @@ const CreateTicketModal = ({onClose}) => {
 
         // if there is a token, try to send a POST request to the backend for ticket creation
         try {
+            console.log("Sending to backend:", {
+                ticketTitle: ticketTitle,
+                ticketDescription: ticketDescription,
+            });
             const response = await fetch('http://localhost:8080/api/tickets', {
                 method: 'POST', // used to send data to server
                 headers: { // key-value pairs that give server information about the request, important so spring boot knows how to parse the data
@@ -25,8 +29,8 @@ const CreateTicketModal = ({onClose}) => {
                     'Authorization': `Bearer ${token}`, // securely sends a token to our back end
                 },
                 body: JSON.stringify({
-                    title: ticketTitle, // contains the actual data, converted to json string
-                    description: ticketDescription
+                    ticketTitle: ticketTitle, // contains the actual data, converted to json string
+                    ticketDescription: ticketDescription
                 }),
             });
 
@@ -34,8 +38,9 @@ const CreateTicketModal = ({onClose}) => {
             if(response.ok) {
                 const data = await response.json(); // converts response from backend JSON to JS object and holds Ticket object
                 alert(`Ticket #${data.ticketNo} created!`);
-                setTicketTitle('');
-                setTicketDescription('');
+                setTicketTitle(''); // clear form
+                setTicketDescription(''); // clear form
+                await onTicketCreated();
                 onClose();
             } else {
                 alert('Failed to create ticket');
@@ -56,7 +61,7 @@ const CreateTicketModal = ({onClose}) => {
             padding: '20px',
             border: '1px solid #ccc',
             zIndex: 1000,
-            opacity: .7,
+            opacity: .95,
         }}>
             <h2>Create Ticket</h2>
             <p style= {{
@@ -64,7 +69,7 @@ const CreateTicketModal = ({onClose}) => {
             }}>Ticket Title</p>
             <input type="text"
                 value={ticketTitle}
-                onChange={(e) => setTicketTitle(e.target.value)}
+                onChange={(e) => {setTicketTitle(e.target.value)}}
                 placeholder="Ticket Title"
                 required
                 style = {{
