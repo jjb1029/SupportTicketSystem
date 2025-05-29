@@ -11,6 +11,18 @@ const TicketDetailsModal = ({ ticket, onClose }) => {
     }
 
     return (
+
+        <>
+        <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 999
+        }} onClick={onClose} />
+
         <div style={{
             position: 'fixed',
             top: '20%',
@@ -22,10 +34,12 @@ const TicketDetailsModal = ({ ticket, onClose }) => {
             zIndex: 1000
         }}>
             <h2>Ticket #{ticket.ticketNo}</h2>
+            <p>{ticket.ticketDescription}</p>
 
             <button>Accept Ticket</button>
             <button onClick={onClose}>Close</button>
         </div>
+        </>
     );
 }
 
