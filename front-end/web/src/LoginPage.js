@@ -36,7 +36,8 @@ function LoginPage() {
       // the catch will catch an error, let us know, and log the error
       const data = await response.json();
       localStorage.setItem('token', data.token); // store JWT
-      console.log(data.token);
+      localStorage.setItem('role', data.role);
+      console.log(localStorage.getItem('role'));
       alert(`Welcome, ${data.username}!`);
       navigate('/Dashboard'); // after successful login, route to dashboard
     } catch (error) {

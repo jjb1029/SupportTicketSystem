@@ -4,6 +4,7 @@ public class AuthCredentialsRequest {
 
 	private String username;
 	private String password;
+	private String role;
 	
 	public String getUsername() {
 		return username;
@@ -16,5 +17,13 @@ public class AuthCredentialsRequest {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
+	public String getRole() {
+		return this.role;
 	}
 }

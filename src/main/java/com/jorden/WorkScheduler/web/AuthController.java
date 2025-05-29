@@ -44,6 +44,7 @@ public class AuthController {
 			Map<String, String> responseBody = new HashMap<>();
 			responseBody.put("token", jwtUtil.generateToken(user)); // in the response add the JWT
 			responseBody.put("username", user.getUsername()); // add username
+			responseBody.put("role", user.getRole()); // add role of user
 			
 			return ResponseEntity.ok(responseBody);
 		} catch (BadCredentialsException ex) {

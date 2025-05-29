@@ -10,6 +10,7 @@ function Dashboard() {
   const [tickets, setTickets] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [currentTab, setCurrentTab] = useState('my');
 
   useEffect(() => {
     fetch("http://localhost:8080/api/tickets/status/OPEN", {
@@ -61,7 +62,11 @@ function Dashboard() {
             <button onClick={() => setShowCreateModal(true)}>Create Ticket</button>
             {showCreateModal && <CreateTicketModal onClose={() => setShowCreateModal(false)} onTicketCreated={fetchTickets} />}
             <div className="dashboard-ticket-container">
-                <h2>Open Tickets</h2>
+                <div className="tabs-container">
+                  <div className={`tab ${currentTab === 'open' ? 'active' : ''}`} onClick={() => setCurrentTab('open')}>Open</div>
+                  <div className={`tab ${currentTab === 'my' ? 'active' : ''}`} onClick={() => setCurrentTab('my')}>My Tickets</div>
+                  <div className={`tab ${currentTab === 'all' ? 'active' : ''}`} onClick={() => setCurrentTab('all')}>All Tickets</div>
+                </div>
                 <table className="ticket-table">
                     <thead>
                         <tr>
