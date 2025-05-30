@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-const TicketDetailsModal = ({ ticket, onClose }) => {
+const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     // see if we have token
     const token = localStorage.getItem('token');
 
@@ -30,6 +30,12 @@ const TicketDetailsModal = ({ ticket, onClose }) => {
                 },
                 body: JSON.stringify({username})
             });
+            
+            // conflict response - comes from accepting an already assigned ticket
+            if(response.status === 409) {
+                alert("Ticket is already assigned.");
+                throw new Error("Cannot reassign ticket.");
+            }
 
             // good response
             if(!response.ok) {
@@ -37,10 +43,11 @@ const TicketDetailsModal = ({ ticket, onClose }) => {
             }
 
             alert(`Ticket #${ticket.ticketNo} has been assigned to ${username}`);
+            onTicketUpdate();
             onClose();
         } catch(error) {
             console.log("Error: " + error);
-            alert("An error occured while assigning ticket.");
+            //alert("An error occured while assigning ticket.");
         }
     }
 

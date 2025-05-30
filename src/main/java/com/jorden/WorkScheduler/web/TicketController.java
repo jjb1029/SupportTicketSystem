@@ -118,17 +118,19 @@ public class TicketController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
 		}
 		
-		return ticketRepository.findByTicketCreator(user);
+		return ticketRepository.findByTicketHandler(user);
 	}
 	
 	// assigning a ticket to a user
 	@PutMapping("/{ticketNo}/assign")
 	public ResponseEntity<?> assignTicketToUser(@PathVariable Long ticketNo, @RequestBody Map<String, String> body) {
 		String username = body.get("username"); // get username from json response
-		System.out.println("username attempting to put " + username);
 		
 		Optional<User> userOpt = userRepository.findByUsername(username);
 		Optional<Ticket> ticketOpt = ticketRepository.findById(ticketNo);
+		
+		if(ticketOpt.get().getTicketHandler() != null)
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Ticket is already assigned.");
 		
 		if(userOpt.isEmpty() || ticketOpt.isEmpty())
 			return ResponseEntity.notFound().build();
@@ -137,6 +139,7 @@ public class TicketController {
 		User user = userOpt.get();
 		
 		ticket.setTicketHandler(user);
+		ticket.setTicketStatus(TicketStatus.IN_PROGRESS);
 		ticketRepository.save(ticket);
 		
 		return ResponseEntity.ok("Ticket assigned to " + username);

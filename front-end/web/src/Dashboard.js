@@ -77,6 +77,11 @@ function Dashboard() {
     setSelectedTicket(ticket);
   };
 
+  const ticketStatus = (ticket) => {
+    if(ticket.ticketStatus === "IN_PROGRESS")
+      ticket.ticketStatus = "IN PROGRESS";
+  }
+
     return (
         <div>
             <h1> Welcome to your dashboard</h1>
@@ -108,16 +113,19 @@ function Dashboard() {
                             <th>Status</th>
                             <th>Created</th>
                             <th>Created by</th>
+                            <th>Assigned to</th>
                         </tr>
                     </thead>
                     <tbody>
                         {tickets.map((ticket) => (
+                            ticketStatus(ticket),
                             <tr key={ticket.ticketNo} onClick={() => handleTicketClick(ticket)}>
                                 <td>{ticket.ticketNo}</td>
                                 <td>{ticket.ticketTitle}</td>
                                 <td>{ticket.ticketStatus}</td>
                                 <td>{new Date(ticket.timeCreated).toLocaleString()}</td>
                                 <td>{ticket.ticketCreator.username}</td>
+                                <td>{ticket.ticketHandler?.username || "Unassigned"}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -126,6 +134,7 @@ function Dashboard() {
                   <TicketDetailsModal
                     ticket={selectedTicket}
                     onClose={() => setSelectedTicket(null)}
+                    onTicketUpdate={fetchTickets}
                   />
                 )}
             </div>
