@@ -28,7 +28,7 @@ function Dashboard() {
       });
   }, []);
 
-  const fetchTickets = async() => {
+  const fetchOpenTickets = async() => {
     console.log("attempting to fetch tickets...");
     try {
       const response = await fetch('http://localhost:8080/api/tickets/status/OPEN', {
@@ -67,6 +67,26 @@ function Dashboard() {
       console.log("Error fetching your tickets: " + error);
     };
   };
+
+  const fetchAllTickets = async() => {
+    console.log("attempting to fetch tickets...");
+    try {
+      const response = await fetch('http://localhost:8080/api/tickets', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if(!response.ok) {
+        throw new Error("Failed to fetch tickets");
+      }
+
+      const data = await response.json();
+      setTickets(data);
+    } catch(error) {
+      console.log("Error fetching tickets: " + error);
+    };
+  };
 /*
   useEffect(() => {
     fetchTickets();
@@ -86,13 +106,13 @@ function Dashboard() {
         <div>
             <h1> Welcome to your dashboard</h1>
             <button onClick={() => setShowCreateModal(true)}>Create Ticket</button>
-            {showCreateModal && <CreateTicketModal onClose={() => setShowCreateModal(false)} onTicketCreated={fetchTickets} />}
+            {showCreateModal && <CreateTicketModal onClose={() => setShowCreateModal(false)} onTicketCreated={fetchOpenTickets} />}
             <div className="dashboard-ticket-container">
                 <div className="tabs-container">
                   <div className={`tab ${currentTab === 'open' ? 'active' : ''}`} 
                     onClick={() => {
                       setCurrentTab('open');
-                      fetchTickets();
+                      fetchOpenTickets();
                     }}
                   > Open
                   </div>
@@ -103,7 +123,13 @@ function Dashboard() {
                     }}
                   > My Tickets
                   </div>
-                  <div className={`tab ${currentTab === 'all' ? 'active' : ''}`} onClick={() => setCurrentTab('all')}>All Tickets</div>
+                  <div className={`tab ${currentTab === 'all' ? 'active' : ''}`} 
+                    onClick={() => {
+                      setCurrentTab('all')
+                      fetchAllTickets();
+                    }}
+                  >All Tickets
+                  </div>
                 </div>
                 <table className="ticket-table">
                     <thead>
@@ -134,7 +160,7 @@ function Dashboard() {
                   <TicketDetailsModal
                     ticket={selectedTicket}
                     onClose={() => setSelectedTicket(null)}
-                    onTicketUpdate={fetchTickets}
+                    onTicketUpdate={fetchAllTickets}
                   />
                 )}
             </div>

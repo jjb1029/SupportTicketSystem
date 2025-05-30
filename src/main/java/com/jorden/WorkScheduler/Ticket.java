@@ -76,10 +76,7 @@ public class Ticket {
 	}
 
 	public User getTicketHandler() {
-		System.out.println("getting ticket handler\n\n\n");
-		if(this.ticketHandler == null)
-			System.out.println("this ticket handler is null");
-		return ticketHandler;
+		return this.ticketHandler;
 	}
 
 	public void setTicketHandler(User ticketHandler) {
