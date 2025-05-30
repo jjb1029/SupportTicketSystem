@@ -1,6 +1,7 @@
 package com.jorden.WorkScheduler.web;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.jorden.WorkScheduler.Ticket;
 import com.jorden.WorkScheduler.Ticket.TicketStatus;
@@ -107,12 +109,36 @@ public class TicketController {
 	public List<Ticket> getTicketsByStatus(@PathVariable TicketStatus status) {
 		return ticketRepository.findByTicketStatus(status);
 	}
-/*	
-	// get ticket with a certain ID
-	// GET api/tickets/{id}
-	@GetMapping("/{id}")
-	public ResponseEntity<Ticket> getTickedById(@PathVariable long id) {
-		Optional<Ticket> ticket = ticketRepository.findById(id);
-		return ticket.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build()); 
-	} */
+	
+	// get tickets that are handled by the user
+	@GetMapping("/user/{username}")
+	public List<Ticket> getTicketsByUser(@PathVariable String username) {
+		Optional<User> user = userRepository.findByUsername(username);
+		if(user == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
+		}
+		
+		return ticketRepository.findByTicketCreator(user);
+	}
+	
+	// assigning a ticket to a user
+	@PutMapping("/{ticketNo}/assign")
+	public ResponseEntity<?> assignTicketToUser(@PathVariable Long ticketNo, @RequestBody Map<String, String> body) {
+		String username = body.get("username"); // get username from json response
+		System.out.println("username attempting to put " + username);
+		
+		Optional<User> userOpt = userRepository.findByUsername(username);
+		Optional<Ticket> ticketOpt = ticketRepository.findById(ticketNo);
+		
+		if(userOpt.isEmpty() || ticketOpt.isEmpty())
+			return ResponseEntity.notFound().build();
+		
+		Ticket ticket = ticketOpt.get();
+		User user = userOpt.get();
+		
+		ticket.setTicketHandler(user);
+		ticketRepository.save(ticket);
+		
+		return ResponseEntity.ok("Ticket assigned to " + username);
+	}
 }

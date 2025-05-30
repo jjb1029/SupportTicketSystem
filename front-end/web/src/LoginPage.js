@@ -37,6 +37,8 @@ function LoginPage() {
       const data = await response.json();
       localStorage.setItem('token', data.token); // store JWT
       localStorage.setItem('role', data.role);
+      localStorage.setItem('username', data.username);
+      console.log(localStorage.getItem('username'));
       console.log(localStorage.getItem('role'));
       alert(`Welcome, ${data.username}!`);
       navigate('/Dashboard'); // after successful login, route to dashboard

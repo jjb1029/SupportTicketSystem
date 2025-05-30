@@ -1,13 +1,47 @@
 import React, {useState} from 'react';
 
 const TicketDetailsModal = ({ ticket, onClose }) => {
-
     // see if we have token
     const token = localStorage.getItem('token');
 
     if(!token) {
         alert('You must be logged in to view tickets.');
         return;
+    }
+
+    const handleAcceptTicket = async(e) => {
+        e.preventDefault();
+        const username = localStorage.getItem('username');
+
+        // check for ticket in local storage
+        const token = localStorage.getItem('token');
+
+        if(!token) {
+            alert("You need to be logged in to accept a ticket.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/tickets/${ticket.ticketNo}/assign`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization' : `Bearer ${token}`,
+                    'Content-type' : 'application/json',
+                },
+                body: JSON.stringify({username})
+            });
+
+            // good response
+            if(!response.ok) {
+                throw new Error("Failed to assign ticket.");
+            }
+
+            alert(`Ticket #${ticket.ticketNo} has been assigned to ${username}`);
+            onClose();
+        } catch(error) {
+            console.log("Error: " + error);
+            alert("An error occured while assigning ticket.");
+        }
     }
 
     return (
@@ -34,9 +68,13 @@ const TicketDetailsModal = ({ ticket, onClose }) => {
             zIndex: 1000
         }}>
             <h2>Ticket #{ticket.ticketNo}</h2>
-            <p>{ticket.ticketDescription}</p>
+            <p>Ticket Description:</p>
+            <p style={{
+                border: '2px groove black',
+                padding: '6px 10px',
+            }}>{ticket.ticketDescription}</p>
 
-            <button>Accept Ticket</button>
+            <button onClick={handleAcceptTicket}>Accept Ticket</button>
             <button onClick={onClose}>Close</button>
         </div>
         </>
