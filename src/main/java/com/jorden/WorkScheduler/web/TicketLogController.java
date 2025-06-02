@@ -37,7 +37,7 @@ public class TicketLogController {
 	}
 	
 	@PostMapping("/ticket/{ticketId}")
-	public TicketLog addTicketLog(@PathVariable long ticketId, @RequestBody LogRequest request) {
+	public TicketLog addTicketLog(@PathVariable long ticketId, @RequestBody TicketLogRequest request) {
 		
 	}
 }
