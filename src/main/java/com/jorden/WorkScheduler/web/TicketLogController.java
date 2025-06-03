@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.jorden.WorkScheduler.Ticket;
 import com.jorden.WorkScheduler.TicketLog;
+import com.jorden.WorkScheduler.User;
+import com.jorden.WorkScheduler.dto.TicketLogRequest;
 import com.jorden.WorkScheduler.repository.TicketLogRepository;
 import com.jorden.WorkScheduler.repository.TicketRepository;
+import com.jorden.WorkScheduler.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/ticketlogs")
@@ -21,6 +25,9 @@ public class TicketLogController {
 	
 	@Autowired
 	TicketRepository ticketRepository;
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	//get all logs for a ticket
 	@GetMapping("/ticket/{ticketId}")
@@ -37,7 +44,24 @@ public class TicketLogController {
 	}
 	
 	@PostMapping("/ticket/{ticketId}")
-	public TicketLog addTicketLog(@PathVariable long ticketId, @RequestBody TicketLogRequest request) {
+	public ResponseEntity<?> addTicketLog(@PathVariable long ticketId, @RequestBody TicketLogRequest request) {
+		String username = request.getUsername();
+		String message = request.getMessage();
 		
+		Optional<Ticket> ticket = ticketRepository.findById(ticketId);
+		Optional<User> user = userRepository.findByUsername(username);
+		
+		if(ticket.isEmpty() || user.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		Ticket ticketOpt = ticket.get();
+		User userOpt = user.get();
+		
+		TicketLog ticketLog = new TicketLog(ticketOpt, userOpt, message);
+		
+		ticketLogRepository.save(ticketLog);
+		
+		return ResponseEntity.ok(ticketLog);
 	}
 }
