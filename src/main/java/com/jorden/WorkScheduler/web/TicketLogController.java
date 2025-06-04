@@ -48,17 +48,17 @@ public class TicketLogController {
 		String username = request.getUsername();
 		String message = request.getMessage();
 		
-		Optional<Ticket> ticket = ticketRepository.findById(ticketId);
-		Optional<User> user = userRepository.findByUsername(username);
+		Optional<Ticket> ticketOpt = ticketRepository.findById(ticketId);
+		Optional<User> userOpt = userRepository.findByUsername(username);
 		
-		if(ticket.isEmpty() || user.isEmpty()) {
+		if(ticketOpt.isEmpty() || userOpt.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		Ticket ticketOpt = ticket.get();
-		User userOpt = user.get();
+		Ticket ticket = ticketOpt.get();
+		User user = userOpt.get();
 		
-		TicketLog ticketLog = new TicketLog(ticketOpt, userOpt, message);
+		TicketLog ticketLog = new TicketLog(ticket, user, message);
 		
 		ticketLogRepository.save(ticketLog);
 		
