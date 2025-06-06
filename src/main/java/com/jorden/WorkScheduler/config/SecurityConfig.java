@@ -45,6 +45,7 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
 					.requestMatchers("/api/auth/**").permitAll() // allow everyone to login
 					.requestMatchers("/api/tickets/**").authenticated() // ticket endpoints need login
+					.requestMatchers("/api/ticketlogs/**").authenticated() // ticketlogs endpoints need login
 					.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // register jwtfilter

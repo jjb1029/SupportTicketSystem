@@ -1,6 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
+    const[logMessage, setLogMessage] = useState('');
+    const[isSubmitting, setIsSubmitting] = useState(false);
+    const[logs, setLogs] = useState([]);
+
+    useEffect(() => {
+        fetchLogsForTicket();
+    }, [ticket.ticketNo]); // dependency array -> run when ticket.ticketNo changes
+
     // see if we have token
     const token = localStorage.getItem('token');
 
@@ -50,6 +58,71 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
             //alert("An error occured while assigning ticket.");
         }
     }
+
+    const handleSubmitLog = async(e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+
+        const username = localStorage.getItem('username');
+        const token = localStorage.getItem('token');
+
+        if(!token) {
+            alert("You need to be logged in to view ticket.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/ticketlogs/ticket/${ticket.ticketNo}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    message: logMessage 
+                }),
+            });
+
+            // good response
+            if(response.ok) {
+                const data = await response.json();
+                alert(`Log added to the ticket log.`);
+                setLogMessage(''); // clear form
+            } else {
+                alert(`Failed to submit log`);
+            }
+        } catch(error) {
+            console.log('error: ' + error);
+            alert('An error occured while submitting log');
+        }
+        finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    const fetchLogsForTicket = async() => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:8080/api/ticketlogs/ticket/${ticket.ticketNo}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            // bad response
+            if(!response.ok) {
+                throw new Error('Failed to fetch logs.');
+            }
+
+            const data = await response.json();
+
+            // set logs to store the array of logs in state
+            setLogs(data);
+        } catch(error) {
+            console.error("Error fetching logs: " + error);
+        }
+    };
 
     return (
 

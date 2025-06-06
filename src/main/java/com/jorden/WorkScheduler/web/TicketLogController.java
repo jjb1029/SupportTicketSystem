@@ -64,4 +64,9 @@ public class TicketLogController {
 		
 		return ResponseEntity.ok(ticketLog);
 	}
+	
+	@GetMapping("/test")
+	public String test() {
+		return "It works";
+	}
 }

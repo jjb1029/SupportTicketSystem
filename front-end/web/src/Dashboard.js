@@ -30,6 +30,7 @@ function Dashboard() {
 
   const fetchOpenTickets = async() => {
     console.log("attempting to fetch tickets...");
+    console.log("Token: " + localStorage.getItem('token'));
     try {
       const response = await fetch('http://localhost:8080/api/tickets/status/OPEN', {
         headers: {
