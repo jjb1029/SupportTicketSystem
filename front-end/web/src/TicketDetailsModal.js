@@ -156,6 +156,21 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
 
             <button onClick={handleAcceptTicket}>Accept Ticket</button>
             <button onClick={onClose}>Close</button>
+            <div style={{ marginTop: '20px' }}>
+            <h3>Ticket Log</h3>
+            {logs.length === 0 ? (
+                <p>No logs yet for this ticket.</p>
+            ) : (
+                <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+                    {logs.map((log) => (
+                        <li key={log.id} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>
+                            <div><strong>{log.author.username}</strong> at {new Date(log.timeStamp).toLocaleString()}</div>
+                            <div>{log.message}</div>
+                        </li>
+                    ))}
+                </ul>
+            )}
+            </div>
         </div>
         </>
     );
