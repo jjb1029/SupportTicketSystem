@@ -82,8 +82,11 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                     username: username,
                     message: logMessage 
                 }),
+                
             });
 
+            console.log("username: " + username);
+            console.log("message: " + logMessage);
             // good response
             if(response.ok) {
                 const data = await response.json();
@@ -155,7 +158,15 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
             }}>{ticket.ticketDescription}</p>
 
             <button onClick={handleAcceptTicket}>Accept Ticket</button>
-            <button onClick={onClose}>Close</button>
+            <button onClick={onClose}>Close</button><br></br>
+            <textarea 
+                style={{marginTop: '10px'}} 
+                placeholder="Describe your log..."
+                value={logMessage}
+                onChange={(e) => setLogMessage(e.target.value)}
+            ></textarea>
+            <br />
+            <button onClick={handleSubmitLog}>Submit Log</button>
             <div style={{ marginTop: '20px' }}>
             <h3>Ticket Log</h3>
             {logs.length === 0 ? (
