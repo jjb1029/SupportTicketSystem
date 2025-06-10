@@ -49,34 +49,49 @@ function LoginPage() {
   };
 
   return (
-    <div style = {{maxWidth: 300, margin: 'auto', marginTop: 50}}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label> Username: </label><br />
-          <input
-            name = "username"
-            value = {form.username}
-            onChange = {e => setForm({ ...form, username: e.target.value})}
-            required
-          />
-        </div>
+    <div style = {{
+      display: 'flex', 
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      backgroundColor: '#cccccc',
+      flexDirection: 'column' 
+    }}>
+      <h2>Work Scheduler Login</h2>
+      <div style = {{
+        padding: '20px',
+        borderRadius: '8px',
+        backgroundColor: 'white',
+        boxShadow: '10px 5px 5px grey'
+      }}>
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label> Username: </label><br />
+            <input
+              name = "username"
+              value = {form.username}
+              onChange = {e => setForm({ ...form, username: e.target.value})}
+              required
+            />
+          </div>
 
-        <div style={{ marginTop: 10 }}>
-          <label> Password: </label><br />
-          <input
-            name = "password"
-            type = "password"
-            value = {form.password}
-            onChange = {e => setForm({ ...form, password: e.target.value})}
-            required
-          />
-        </div>
+          <div style={{ marginTop: 10 }}>
+            <label> Password: </label><br />
+            <input
+              name = "password"
+              type = "password"
+              value = {form.password}
+              onChange = {e => setForm({ ...form, password: e.target.value})}
+              required
+            />
+          </div>
 
-        <button type = "submit" style = {{ marginTop: 15 }}>
-          Login
-        </button>
-      </form>
+          <button type = "submit" style = {{ marginTop: 15 }}>
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
