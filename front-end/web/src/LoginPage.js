@@ -9,6 +9,9 @@ import { useNavigate } from 'react-router-dom';
 function LoginPage() {
   // create state to hold username and password
   const [form, setForm] = useState({ username: '', password: '' });
+  const [isHovered, setIsHovered] = useState(false);
+  const [error, setError] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
   const navigate = useNavigate();
 
 
@@ -28,7 +31,11 @@ function LoginPage() {
 
       // if the login credentials are incorrect, we let them know
       if (!response.ok) {
-        alert('Login failed. Check your credentials.');
+        setError('Login failed. Please try again.');
+        setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+        }, 4000);
         return;
       }
 
@@ -73,10 +80,17 @@ function LoginPage() {
               value = {form.username}
               onChange = {e => setForm({ ...form, username: e.target.value})}
               required
+              style = {{
+                width: '91%',
+                padding: '8px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                marginTop: '5px'
+              }}
             />
           </div>
 
-          <div style={{ marginTop: 10 }}>
+          <div style={{ marginTop: '10' }}>
             <label> Password: </label><br />
             <input
               name = "password"
@@ -84,13 +98,54 @@ function LoginPage() {
               value = {form.password}
               onChange = {e => setForm({ ...form, password: e.target.value})}
               required
+              style = {{
+                width: '91%',
+                padding: '8px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                marginTop: '5px'
+              }}
             />
           </div>
 
-          <button type = "submit" style = {{ marginTop: 15 }}>
+          <button 
+          type = "submit"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          style = {{ 
+            marginTop: '20px',
+            width: '100%',
+            padding: '10px',
+            backgroundColor: isHovered ? '#0056b3' : '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}>
             Login
           </button>
+          <p style={{ marginTop: '10px' }}>
+            Don't have an account? <a href="/signup">Sign up here</a>
+          </p>
         </form>
+        {showPopup && (
+          <div style={{
+            position: 'fixed',
+            top: '40%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: '#ff4d4f',
+            color: 'white',
+            padding: '16px 24px',
+            borderRadius: '8px',
+            boxShadow: '0px 0px 10px rgba(0,0,0,0.3)',
+            zIndex: 1000,
+            transition: 'opacity 0.5s ease-in-out',
+            textAlign: 'center',
+            }}>
+            {error}
+          </div>
+        )}
       </div>
     </div>
   );
