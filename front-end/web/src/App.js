@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import Dashboard from './Dashboard';
+import UserDashboard from './UserDashboard';
 import PrivateRoute from './PrivateRoute';
 
 function App() {
@@ -15,6 +16,13 @@ function App() {
               <Dashboard />
             </PrivateRoute>
           }
+        />
+        <Route path ="/UserDashboard"
+        element = {
+          <PrivateRoute>
+            <UserDashboard />
+          </PrivateRoute>
+        }
         />
       </Routes>
     </Router>

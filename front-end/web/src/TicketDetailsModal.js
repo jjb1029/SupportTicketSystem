@@ -1,17 +1,18 @@
 import React, {useState, useEffect} from 'react';
+import "./TicketDetailsModal.css"
 
 const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     const[logMessage, setLogMessage] = useState('');
     const[isSubmitting, setIsSubmitting] = useState(false);
     const[logs, setLogs] = useState([]);
+    const role = localStorage.getItem('role');
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         fetchLogsForTicket();
     }, [ticket.ticketNo]); // dependency array -> run when ticket.ticketNo changes
 
-    // see if we have token
-    const token = localStorage.getItem('token');
-
+    // see if we have token/authorization to view tickets
     if(!token) {
         alert('You must be logged in to view tickets.');
         return;
@@ -45,7 +46,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                 throw new Error("Cannot reassign ticket.");
             }
 
-            // good response
+            // bad response
             if(!response.ok) {
                 throw new Error("Failed to assign ticket.");
             }
@@ -85,13 +86,13 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                 
             });
 
-            console.log("username: " + username);
-            console.log("message: " + logMessage);
             // good response
             if(response.ok) {
                 const data = await response.json();
                 alert(`Log added to the ticket log.`);
                 setLogMessage(''); // clear form
+                fetchLogsForTicket();
+                onTicketUpdate();
             } else {
                 alert(`Failed to submit log`);
             }
@@ -128,62 +129,43 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     };
 
     return (
+        <div className="ticket-modal-overlay">
+            <div className="ticket-modal">
+                <button onClick={onClose} className="ticket-close-button">X</button>
 
-        <>
-        <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 999
-        }} onClick={onClose} />
+                <h2>Ticket #{ticket.ticketNo}</h2>
+                <p><strong>Title:</strong> {ticket.ticketTitle}</p>
+                <p><strong>Description:</strong> {ticket.ticketDescription}</p>
+                <p><strong>Status:</strong> {ticket.ticketStatus}</p>
+                <p><strong>Created:</strong> {new Date(ticket.timeCreated).toLocaleString()}</p>
+                <p><strong>Created by:</strong> {ticket.ticketCreator?.username}</p>
+                <p><strong>Assigned to:</strong> {ticket.ticketHandler?.username || "Unassigned"}</p>
 
-        <div style={{
-            position: 'fixed',
-            top: '20%',
-            left: '50%',
-            transform: 'translate(-50%)',
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #ccc',
-            zIndex: 1000
-        }}>
-            <h2>Ticket #{ticket.ticketNo}</h2>
-            <p>Ticket Description:</p>
-            <p style={{
-                border: '2px groove black',
-                padding: '6px 10px',
-            }}>{ticket.ticketDescription}</p>
+                <hr style={{ margin: '20px 0'}} />
 
-            <button onClick={handleAcceptTicket}>Accept Ticket</button>
-            <button onClick={onClose}>Close</button><br></br>
-            <textarea 
-                style={{marginTop: '10px'}} 
-                placeholder="Describe your log..."
-                value={logMessage}
-                onChange={(e) => setLogMessage(e.target.value)}
-            ></textarea>
-            <br />
-            <button onClick={handleSubmitLog}>Submit Log</button>
-            <div style={{ marginTop: '20px' }}>
-            <h3>Ticket Log</h3>
-            {logs.length === 0 ? (
-                <p>No logs yet for this ticket.</p>
-            ) : (
-                <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
-                    {logs.map((log) => (
-                        <li key={log.id} style={{ marginBottom: '10px', borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>
-                            <div><strong>{log.author.username}</strong> at {new Date(log.timeStamp).toLocaleString()}</div>
-                            <div>{log.message}</div>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                <h3>Add Log</h3>
+                <textarea
+                    value={logMessage}
+                    onChange={(e) => setLogMessage(e.target.value)}
+                    placeholder="Leave a log..."
+                    className="ticket-textarea"
+                />
+                <button onClick={handleSubmitLog} className="ticket-submit-button">Submit Log</button>
+
+                <h3 style={{ marginTop: '20px' }}>Logs</h3>
+                <div className="ticket-logs-container">
+                    {logs.length === 0 ? (
+                        <p style={{ fontStyle:'italic' }}>No logs yet.</p>
+                    ) : (
+                        logs.map((log) => (
+                        <div key={log.id} className="ticket-log-item">
+                            <p><strong>{log.author?.username || 'Unknown'}:</strong> {log.message} </p>
+                        </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
-        </>
     );
 }
 

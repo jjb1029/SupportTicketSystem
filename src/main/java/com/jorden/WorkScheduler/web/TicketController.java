@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.pulsar.PulsarProperties.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -87,6 +88,7 @@ public class TicketController {
 	}
 	
 	// delete ticket by ID
+	@PreAuthorize("hasAuthority('tech')")
 	@DeleteMapping("/{id}")
 	public void deleteTicket(@PathVariable long id) {
 		ticketRepository.deleteById(id);
@@ -119,6 +121,17 @@ public class TicketController {
 		}
 		
 		return ticketRepository.findByTicketHandler(user);
+	}
+	
+	// get tickets that are created by a user
+	@GetMapping("/user/creator/{username}")
+	public List<Ticket> getTicketsCreatedByUser(@PathVariable String username) {
+		Optional<User> user = userRepository.findByUsername(username);
+		if(user == null) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+		}
+		
+		return ticketRepository.findByTicketCreator(user);
 	}
 	
 	// assigning a ticket to a user

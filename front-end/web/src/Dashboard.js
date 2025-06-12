@@ -1,6 +1,5 @@
 // The Dashboard of the ticket system.
 // The Dashboard will showcase tickets, their descriptions, who's working on them, who initiated them, etc.
-import CreateTicketForm from "./CreateTicketForm";
 import CreateTicketModal from "./CreateTicketModal";
 import TicketDetailsModal from "./TicketDetailsModal";
 import "./Dashboard.css";
@@ -161,7 +160,7 @@ function Dashboard() {
                   <TicketDetailsModal
                     ticket={selectedTicket}
                     onClose={() => setSelectedTicket(null)}
-                    onTicketUpdate={fetchAllTickets}
+                    onTicketUpdate={fetchOpenTickets}
                   />
                 )}
             </div>

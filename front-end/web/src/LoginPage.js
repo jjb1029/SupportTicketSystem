@@ -36,6 +36,7 @@ function LoginPage() {
         setTimeout(() => {
           setShowPopup(false);
         }, 4000);
+        setForm({username: '', password: ''})
         return;
       }
 
@@ -45,10 +46,15 @@ function LoginPage() {
       localStorage.setItem('token', data.token); // store JWT
       localStorage.setItem('role', data.role);
       localStorage.setItem('username', data.username);
-      console.log(localStorage.getItem('username'));
-      console.log(localStorage.getItem('role'));
-      alert(`Welcome, ${data.username}!`);
-      navigate('/Dashboard'); // after successful login, route to dashboard
+
+      if(localStorage.getItem('role') === 'user') {
+        console.log("Loading user dashboard");
+        navigate('/UserDashboard');
+      }
+      else {
+        console.log("Loading tech dashboard");
+        navigate('/Dashboard');
+      }
     } catch (error) {
       alert('Error connecting to server');
       console.error(error);
@@ -125,7 +131,7 @@ function LoginPage() {
             Login
           </button>
           <p style={{ marginTop: '10px' }}>
-            Don't have an account? <a href="/signup">Sign up here</a>
+            Don't have an account? <a href="#">Sign up here</a>
           </p>
         </form>
         {showPopup && (

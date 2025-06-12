@@ -1,0 +1,70 @@
+.ticket-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.ticket-modal {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.ticket-close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+}
+
+.ticket-textarea {
+    width: 100%;
+    height: 80px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+.ticket-submit-button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ticket-logs-container {
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.ticket-log-item {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.ticket-log-timestamp {
+    font-size: 0.85em;
+    color: #888;
+}
