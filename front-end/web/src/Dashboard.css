@@ -52,3 +52,28 @@
 .ticket-table tr:hover {
     background-color: #f0f8ff;
 }
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+}
+
+.filter-container label {
+    font-weight: bold;
+}
+
+.filter-container select {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.filter-container select:focus {
+    border-color: #007bff;
+}

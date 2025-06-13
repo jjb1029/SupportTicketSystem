@@ -10,6 +10,7 @@ function UserDashboard() {
     const [tickets, setTickets] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
+    const [statusFilter, setStatusFilter] = useState()
     const username = localStorage.getItem('username');
 
     const fetchMyTickets = async() => {
@@ -43,6 +44,14 @@ function UserDashboard() {
         return status === "IN_PROGRESS" ? "IN PROGRESS" : status;
     }
 
+    const filteredTickets = tickets.filter((ticket) => {
+        if(statusFilter === 'All') {
+            return true;
+        }
+
+        return ticket.ticketStatus === statusFilter;
+    });
+
     return (
         <div>
             <h1>Welcome to your dashboard, {username}</h1>
@@ -52,6 +61,19 @@ function UserDashboard() {
                 <div className="tabs-container">
                     <div className="tab my">
                         My Tickets 
+                    </div>
+                    <div className="filter-container">
+                        <label htmlFor="statusFilter">Filter by Status: </label>
+                        <select
+                            id="statusFilter"
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
+                            <option value="All">All</option>
+                            <option value="UNASSIGNED">Unassigned</option>
+                            <option value="IN_PROGRESS">In Progress</option>
+                            <option value="COMPLETED">Completed</option>
+                        </select>
                     </div>
                 </div>
                 <table className="ticket-table">
@@ -66,7 +88,7 @@ function UserDashboard() {
                         </tr>
                     </thead>
                     <tbody>
-                        {tickets.map((ticket) => (
+                        {filteredTickets.map((ticket) => (
                             <tr key={ticket.ticketNo} onClick={() => handleTicketClick(ticket)}>
                                 <td>{ticket.ticketNo}</td>
                                 <td>{ticket.ticketTitle}</td>
