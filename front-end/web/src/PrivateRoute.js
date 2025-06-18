@@ -2,14 +2,21 @@
 // This protects a page from being accessed without being logged in
 
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
-function PrivateRoute({ children }) {
+function PrivateRoute({ children, requiredRole }) {
     const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    const location = useLocation();
 
     // if no token exists, redirect to login page
     if(!token) {
-        return <Navigate to = "/" replace />;
+        return <Navigate to = "/" state={{ from: location }} replace />;
+    }
+
+    if(requiredRole && role != requiredRole) {
+        // send to right dashboard if wrong one
+        return <Navigate to = {role === 'tech' ? '/Dashboard' : '/UserDashboard'} replace />;
     }
 
     // if token exists, show the protected component

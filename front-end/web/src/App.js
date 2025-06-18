@@ -12,14 +12,14 @@ function App() {
         <Route path = "/" element  = {<LoginPage />} />
         <Route path = "/Dashboard" 
           element = {
-            <PrivateRoute>
+            <PrivateRoute requiredRole='tech'>
               <Dashboard />
             </PrivateRoute>
           }
         />
         <Route path ="/UserDashboard"
         element = {
-          <PrivateRoute>
+          <PrivateRoute requiredRole='user'>
             <UserDashboard />
           </PrivateRoute>
         }
