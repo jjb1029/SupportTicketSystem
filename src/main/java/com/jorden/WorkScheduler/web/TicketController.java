@@ -157,4 +157,17 @@ public class TicketController {
 		
 		return ResponseEntity.ok("Ticket assigned to " + username);
 	}
+	
+	// updating a ticket
+	@PutMapping("/{ticketNo}/update")
+	@PreAuthorize("hasRole('tech') or @ticketSecurity.isCreator(authentication, #ticketNo)")
+	public ResponseEntity<?> updateTicketDetails(@PathVariable long ticketNo, @RequestBody Ticket updatedTicketData) {
+		Ticket ticket = ticketRepository.findById(ticketNo).orElse(null);
+		
+		ticket.setTicketTitle(updatedTicketData.getTicketTitle());
+		ticket.setTicketDescription(updatedTicketData.getTicketDescription());
+		
+		ticketRepository.save(ticket);
+		return ResponseEntity.ok(ticket);
+	}
 }

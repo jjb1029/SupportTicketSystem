@@ -5,8 +5,13 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     const[logMessage, setLogMessage] = useState('');
     const[isSubmitting, setIsSubmitting] = useState(false);
     const[logs, setLogs] = useState([]);
+    const[isEditing, setIsEditing] = useState(false);
+    const [editedTitle, setEditedTitle] = useState(ticket.ticketTitle);
+    const [editedDescription, setEditedDescription] = useState(ticket.ticketDescription);
     const role = localStorage.getItem('role');
     const token = localStorage.getItem('token');
+    const userIsCreator = ticket.ticketCreator.username === localStorage.getItem('username');
+    const userIsTech = localStorage.getItem('role') === 'tech';
 
     useEffect(() => {
         fetchLogsForTicket();
@@ -126,6 +131,34 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
         } catch(error) {
             console.error("Error fetching logs: " + error);
         }
+    }
+
+    const handleSaveChanges = async() => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:8080/api/tickets/${ticket.ticketNo}/update`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    ticketTitle: editedTitle,
+                    ticketDescription: editedDescription
+                }),
+            });
+
+            if(!response.ok) {
+                throw new Error("Update failed.");
+            }
+            console.log("ticket description: " + editedDescription);
+            console.log("ticket title: " + editedTitle);
+            setIsEditing(false);
+            onTicketUpdate();
+            onClose();
+        } catch (err) {
+            console.error("Error updating ticket: ", err);
+        }
     };
 
     return (
@@ -140,6 +173,28 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                 <p><strong>Created:</strong> {new Date(ticket.timeCreated).toLocaleString()}</p>
                 <p><strong>Created by:</strong> {ticket.ticketCreator?.username}</p>
                 <p><strong>Assigned to:</strong> {ticket.ticketHandler?.username || "Unassigned"}</p>
+                {(userIsCreator || userIsTech) && (
+                    <button onClick={() => setIsEditing(true)}>Edit</button>
+                )}
+                {isEditing ? (
+                    <>
+                        <input
+                            value={editedTitle}
+                            onChange={(e) => setEditedTitle(e.target.value)}
+                        />
+                        <textarea
+                            value={editedDescription}
+                            onChange={(e) => setEditedDescription(e.target.value)}
+                        />
+                        <button onClick={handleSaveChanges}>Save</button>
+                        <button onClick={() => setIsEditing(false)}>Cancel</button>
+                    </>
+                ) : (
+                    <>
+                        <h2>{ticket.ticketTitle}</h2>
+                        <p>{ticket.ticketDescription}</p>
+                    </>
+                )}
 
                 <hr style={{ margin: '20px 0'}} />
 
