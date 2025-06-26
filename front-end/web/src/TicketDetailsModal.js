@@ -1,15 +1,18 @@
 import React, {useState, useEffect} from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import "./TicketDetailsModal.css"
-import EditTicketModal from "./EditTicketModal.js"
+import EditTicketSection from "./EditTicketSection.js"
 
 const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
+    const [currentTicket, setCurrentTicket] = useState(ticket);
     const [logMessage, setLogMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [logs, setLogs] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState(ticket.ticketTitle);
     const [editedDescription, setEditedDescription] = useState(ticket.ticketDescription);
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditSection, setShowEditSection] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
     const role = localStorage.getItem('role');
     const token = localStorage.getItem('token');
     const userIsCreator = ticket.ticketCreator.username === localStorage.getItem('username');
@@ -161,6 +164,11 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
         } catch (err) {
             console.error("Error updating ticket: ", err);
         }
+    }
+
+    const handleTicketUpdate = (updatedTicket) => {
+        setCurrentTicket(updatedTicket); // updates modal with new information from editing
+        onTicketUpdate(); // updates list also
     };
 
     return (
@@ -168,24 +176,38 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
             <div className="ticket-modal">
                 <button onClick={onClose} className="ticket-close-button">X</button>
 
-                <h2>Ticket #{ticket.ticketNo}</h2>
-                <p><strong>Title:</strong> {ticket.ticketTitle}</p>
-                <p><strong>Description:</strong> {ticket.ticketDescription}</p>
-                <p><strong>Status:</strong> {ticket.ticketStatus}</p>
-                <p><strong>Created:</strong> {new Date(ticket.timeCreated).toLocaleString()}</p>
-                <p><strong>Created by:</strong> {ticket.ticketCreator?.username}</p>
-                <p><strong>Assigned to:</strong> {ticket.ticketHandler?.username || "Unassigned"}</p>
-                {(userIsCreator || userIsTech) && (
-                    <button onClick={() => setShowEditModal(true)}>Edit</button>
+                <h2>Ticket #{currentTicket.ticketNo}</h2>
+                <p><strong>Title:</strong> {currentTicket.ticketTitle}</p>
+                <p><strong>Description:</strong> {currentTicket.ticketDescription}</p>
+                <p><strong>Status:</strong> {currentTicket.ticketStatus}</p>
+                <p><strong>Created:</strong> {new Date(currentTicket.timeCreated).toLocaleString()}</p>
+                <p><strong>Created by:</strong> {currentTicket.ticketCreator?.username}</p>
+                <p><strong>Assigned to:</strong> {currentTicket.ticketHandler?.username || "Unassigned"}</p>
+                {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && (
+                    <button onClick={() => setShowEditSection(true)}>Edit</button>
                 )}
-                {showEditModal && (
-                    <EditTicketModal
-                        ticket={ticket}
-                        onClose={() => setShowEditModal(false)}
-                        onTicketUpdate={onTicketUpdate}
-                    />
-                    
-                )}
+                <AnimatePresence>
+                    {showEditSection && (
+                        <motion.div
+                            key="edit-section"
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.4, ease: 'easeInOut' }}
+                            onAnimationStart={() => setIsAnimating(true)}
+                            onAnimationComplete={() => setIsAnimating(false)}
+                            className="edit-ticket-section"
+                        >
+                            <EditTicketSection
+                                key={ticket.ticketNo}
+                                ticket={ticket}
+                                onClose={() => setShowEditSection(false)}
+                                onTicketUpdate={handleTicketUpdate}
+                            />
+                            
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <hr style={{ margin: '20px 0'}} />
 

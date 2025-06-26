@@ -1,11 +1,16 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import "./TicketDetailsModal.js"
 
-const EditTicketModal = ({ticket, onClose, onTicketUpdate}) => {
+const EditTicketSection = ({ticket, onClose, onTicketUpdate}) => {
     const [title, setTitle] = useState(ticket.ticketTitle);
     const [description, setDescription] = useState(ticket.ticketDescription);
     const userIsCreator = ticket.ticketCreator.username === localStorage.getItem('username');
     const userIsTech = localStorage.getItem('role') === 'tech';
+
+    useEffect(() => {
+        setTitle(ticket.ticketTitle);
+        setDescription(ticket.ticketDescription);
+    }, [ticket]);
 
     const handleSaveChanges = async() => {
         try {
@@ -25,7 +30,10 @@ const EditTicketModal = ({ticket, onClose, onTicketUpdate}) => {
             if(!response.ok) {
                 throw new Error("update failed.");
             }
+            const updatedTicket = {...ticket, ticketTitle: title, ticketDescription: description}
+            onTicketUpdate(updatedTicket);
             onClose();
+            
         } catch (err) {
             console.error("Error updating ticket: ", err);
         }
@@ -44,10 +52,10 @@ const EditTicketModal = ({ticket, onClose, onTicketUpdate}) => {
                 onChange={(e) => setDescription(e.target.value)}
             />
             <br />
-            <button onClick={handleSaveChanges}>Save</button>
+            <button onClick={handleSaveChanges} className="edit-save-button">Save</button>
             <button onClick={onClose}>Cancel</button>
         </>
     );
 }
 
-export default EditTicketModal;
+export default EditTicketSection;
