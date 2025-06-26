@@ -1,19 +1,23 @@
 import React, {useState, useEffect} from 'react';
+import {motion} from 'framer-motion';
 import "./TicketDetailsModal.js"
 
 const EditTicketSection = ({ticket, onClose, onTicketUpdate}) => {
     const [title, setTitle] = useState(ticket.ticketTitle);
     const [description, setDescription] = useState(ticket.ticketDescription);
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
     const userIsCreator = ticket.ticketCreator.username === localStorage.getItem('username');
     const userIsTech = localStorage.getItem('role') === 'tech';
 
     useEffect(() => {
         setTitle(ticket.ticketTitle);
         setDescription(ticket.ticketDescription);
-    }, [ticket]);
+    }, [ticket]); 
 
     const handleSaveChanges = async() => {
         try {
+            setIsSaving(true);
             const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:8080/api/tickets/${ticket.ticketNo}/update`,{
                 method: 'PUT',
@@ -32,8 +36,10 @@ const EditTicketSection = ({ticket, onClose, onTicketUpdate}) => {
             }
             const updatedTicket = {...ticket, ticketTitle: title, ticketDescription: description}
             onTicketUpdate(updatedTicket);
+            setIsSaving(false);
+            setSaveSuccess(true);
+            setTimeout(() => setSaveSuccess(false), 2000);
             onClose();
-            
         } catch (err) {
             console.error("Error updating ticket: ", err);
         }
@@ -52,7 +58,14 @@ const EditTicketSection = ({ticket, onClose, onTicketUpdate}) => {
                 onChange={(e) => setDescription(e.target.value)}
             />
             <br />
-            <button onClick={handleSaveChanges} className="edit-save-button">Save</button>
+            <motion.button
+                whileTap={{ scale: 0.95 }}
+                disabled={isSaving}
+                className={`save-button ${saveSuccess ? 'success' : ''}`}
+                onClick={handleSaveChanges}
+            >
+                {isSaving ? 'Saving...' : saveSuccess ? 'Saved! ✅' : 'Save'}
+            </motion.button>
             <button onClick={onClose}>Cancel</button>
         </>
     );

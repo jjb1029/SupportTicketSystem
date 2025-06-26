@@ -199,8 +199,8 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                             className="edit-ticket-section"
                         >
                             <EditTicketSection
-                                key={ticket.ticketNo}
-                                ticket={ticket}
+                                key={currentTicket.ticketNo}
+                                ticket={currentTicket}
                                 onClose={() => setShowEditSection(false)}
                                 onTicketUpdate={handleTicketUpdate}
                             />
