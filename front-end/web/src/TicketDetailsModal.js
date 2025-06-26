@@ -1,13 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import "./TicketDetailsModal.css"
+import EditTicketModal from "./EditTicketModal.js"
 
 const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
-    const[logMessage, setLogMessage] = useState('');
-    const[isSubmitting, setIsSubmitting] = useState(false);
-    const[logs, setLogs] = useState([]);
-    const[isEditing, setIsEditing] = useState(false);
+    const [logMessage, setLogMessage] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [logs, setLogs] = useState([]);
+    const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState(ticket.ticketTitle);
     const [editedDescription, setEditedDescription] = useState(ticket.ticketDescription);
+    const [showEditModal, setShowEditModal] = useState(false);
     const role = localStorage.getItem('role');
     const token = localStorage.getItem('token');
     const userIsCreator = ticket.ticketCreator.username === localStorage.getItem('username');
@@ -174,26 +176,15 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                 <p><strong>Created by:</strong> {ticket.ticketCreator?.username}</p>
                 <p><strong>Assigned to:</strong> {ticket.ticketHandler?.username || "Unassigned"}</p>
                 {(userIsCreator || userIsTech) && (
-                    <button onClick={() => setIsEditing(true)}>Edit</button>
+                    <button onClick={() => setShowEditModal(true)}>Edit</button>
                 )}
-                {isEditing ? (
-                    <>
-                        <input
-                            value={editedTitle}
-                            onChange={(e) => setEditedTitle(e.target.value)}
-                        />
-                        <textarea
-                            value={editedDescription}
-                            onChange={(e) => setEditedDescription(e.target.value)}
-                        />
-                        <button onClick={handleSaveChanges}>Save</button>
-                        <button onClick={() => setIsEditing(false)}>Cancel</button>
-                    </>
-                ) : (
-                    <>
-                        <h2>{ticket.ticketTitle}</h2>
-                        <p>{ticket.ticketDescription}</p>
-                    </>
+                {showEditModal && (
+                    <EditTicketModal
+                        ticket={ticket}
+                        onClose={() => setShowEditModal(false)}
+                        onTicketUpdate={onTicketUpdate}
+                    />
+                    
                 )}
 
                 <hr style={{ margin: '20px 0'}} />

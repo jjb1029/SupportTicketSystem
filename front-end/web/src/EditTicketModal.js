@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import "./TicketDetailsModal.js"
 
 const EditTicketModal = ({ticket, onClose, onTicketUpdate}) => {
     const [title, setTitle] = useState(ticket.ticketTitle);
@@ -32,9 +33,21 @@ const EditTicketModal = ({ticket, onClose, onTicketUpdate}) => {
 
     return (
         <>
+            <p>New Title: </p>
             <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
             />
+            <p>New Description: </p>
+            <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+            />
+            <br />
+            <button onClick={handleSaveChanges}>Save</button>
+            <button onClick={onClose}>Cancel</button>
         </>
-    )}
+    );
+}
+
+export default EditTicketModal;
