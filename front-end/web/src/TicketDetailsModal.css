@@ -77,7 +77,9 @@
     background-color: #f9f9f9;
 }
 
-.save-button {
+.save-button, .cancel-button, .edit-button {
+    margin-bottom: 5px;
+    margin-right: 5px;
     padding: 8px 16px;
     background-color: #007bff;
     color: white;
@@ -94,4 +96,13 @@
 
 .save-button.success {
     background-color: #28a745;
+}
+
+.cancel-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #5a6268;
 }

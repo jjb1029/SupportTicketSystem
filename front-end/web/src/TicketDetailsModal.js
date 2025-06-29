@@ -184,7 +184,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                 <p><strong>Created by:</strong> {currentTicket.ticketCreator?.username}</p>
                 <p><strong>Assigned to:</strong> {currentTicket.ticketHandler?.username || "Unassigned"}</p>
                 {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && (
-                    <button onClick={() => setShowEditSection(true)}>Edit</button>
+                    <button onClick={() => setShowEditSection(true)} className="edit-button">Edit</button>
                 )}
                 <AnimatePresence>
                     {showEditSection && (

@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import {motion} from 'framer-motion';
+import "./CreateTicketModal.css";
 
 const CreateTicketModal = ({onClose, onTicketCreated}) => {
     const[ticketTitle, setTicketTitle] = useState('');
@@ -18,10 +20,6 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
 
         // if there is a token, try to send a POST request to the backend for ticket creation
         try {
-            console.log("Sending to backend:", {
-                ticketTitle: ticketTitle,
-                ticketDescription: ticketDescription,
-            });
             const response = await fetch('http://localhost:8080/api/tickets', {
                 method: 'POST', // used to send data to server
                 headers: { // key-value pairs that give server information about the request, important so spring boot knows how to parse the data
@@ -36,8 +34,6 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
 
             // if response works
             if(response.ok) {
-                const data = await response.json(); // converts response from backend JSON to JS object and holds Ticket object
-                alert(`Ticket #${data.ticketNo} created!`);
                 setTicketTitle(''); // clear form
                 setTicketDescription(''); // clear form
                 await onTicketCreated();
@@ -52,53 +48,43 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
     }
 
     return (
-        <div style= {{
-            position: 'fixed',
-            top: '20%',
-            left: '50%',
-            transform: 'translate(-50%)',
-            backgroundColor: 'white',
-            padding: '20px',
-            border: '1px solid #ccc',
-            zIndex: 1000,
-            opacity: .95,
-        }}>
-            <h2>Create Ticket</h2>
-            <p style= {{
-                marginBottom: '1px'
-            }}>Ticket Title</p>
-            <input type="text"
-                value={ticketTitle}
-                onChange={(e) => {setTicketTitle(e.target.value)}}
-                placeholder="Ticket Title"
-                required
-                style = {{
-                    marginTop: '0px'
-                }}
-            />
-            <br />
-            <p style = {{
-                marginBottom: '1px'
-            }}>Ticket Description</p>
-            <textarea
-                value={ticketDescription}
-                onChange={(e) => setTicketDescription(e.target.value)}
-                placeholder="Describe your issue..."
-                required
-                style = {{
-                    marginTop: '10px'
-                }}
-            />
-            <br />
-            <button 
-                type="submit" 
-                onClick={handleCreateTicket}
-                disabled={!ticketDescription || !ticketTitle}>
-            Submit Ticket
-            </button>
-            <button onClick={onClose}>Close</button>
+        <div className="create-ticket-overlay">
+            <motion.div
+                className="create-ticket-modal"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+            >
+                <button className="create-close-button" onClick={onClose}>X</button>
+                <h2>Create New Ticket</h2>
+
+                <form onSubmit={handleCreateTicket} className="ticket-form">
+                    <label>Title:</label>
+                    <input
+                        type="text"
+                        value={ticketTitle}
+                        onChange={(e) => setTicketTitle(e.target.value)}
+                        required
+                        placeholder="Enter ticket title"
+                    />
+
+                    <label>Description:</label>
+                    <textarea
+                        value = {ticketDescription}
+                        onChange={(e) => setTicketDescription(e.target.value)}
+                        required
+                        placeholder="Describe the issue"
+                    />
+
+                    <div className="form-buttons">
+                        <button type="submit" className="create-submit-button">Submit</button>
+                        <button type="button" className="create-cancel-button" onClick={onClose}>Cancel</button>
+                    </div>
+                </form>
+            </motion.div>
         </div>
     );
-};
+}
 
 export default CreateTicketModal;

@@ -66,7 +66,13 @@ const EditTicketSection = ({ticket, onClose, onTicketUpdate}) => {
             >
                 {isSaving ? 'Saving...' : saveSuccess ? 'Saved! ✅' : 'Save'}
             </motion.button>
-            <button onClick={onClose}>Cancel</button>
+            <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onClose}
+                className="cancel-button"
+            >
+                Cancel
+            </motion.button>
         </>
     );
 }

@@ -22,9 +22,9 @@
 			<item value=""/>
 		</list>
 		<section name="ExternalProjectImportWizard.dialogBounds">
-			<item key="DIALOG_X_ORIGIN" value="1026"/>
+			<item key="DIALOG_X_ORIGIN" value="989"/>
 			<item key="DIALOG_Y_ORIGIN" value="371"/>
-			<item key="DIALOG_WIDTH" value="525"/>
+			<item key="DIALOG_WIDTH" value="599"/>
 			<item key="DIALOG_HEIGHT" value="710"/>
 			<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
 		</section>
@@ -35,12 +35,13 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="C:\Users\Jorden\Documents\SupportTicketSystem\SupportTicketSystem\.mvn"/>
 			<item value="C:\Users\Jorden\Documents\SupportTicketSystem\SupportTicketSystem"/>
 			<item value="C:\Users\Jorden\Documents\WorkScheduler"/>
 		</list>
 		<section name="SmartImportWizard.dialogBounds">
-			<item key="DIALOG_X_ORIGIN" value="846"/>
-			<item key="DIALOG_Y_ORIGIN" value="289"/>
+			<item key="DIALOG_X_ORIGIN" value="989"/>
+			<item key="DIALOG_Y_ORIGIN" value="371"/>
 			<item key="DIALOG_WIDTH" value="885"/>
 			<item key="DIALOG_HEIGHT" value="629"/>
 			<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
