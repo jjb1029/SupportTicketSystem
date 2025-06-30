@@ -5,9 +5,12 @@ import "./CreateTicketModal.css";
 const CreateTicketModal = ({onClose, onTicketCreated}) => {
     const[ticketTitle, setTicketTitle] = useState('');
     const[ticketDescription, setTicketDescription] = useState('')
+    // submit button state, idle, saving or success. While saving, spinner, success will display checkmark
+    const[buttonState, setButtonState] = useState('idle')
 
     const handleCreateTicket = async(e) => {
         e.preventDefault();
+        setButtonState('saving'); // set button state to saving, spinner
 
         // check for ticket in local storage
         const token = localStorage.getItem('token');
@@ -20,6 +23,7 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
 
         // if there is a token, try to send a POST request to the backend for ticket creation
         try {
+            await new Promise(resolve => setTimeout(resolve, 2000));
             const response = await fetch('http://localhost:8080/api/tickets', {
                 method: 'POST', // used to send data to server
                 headers: { // key-value pairs that give server information about the request, important so spring boot knows how to parse the data
@@ -34,10 +38,12 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
 
             // if response works
             if(response.ok) {
-                setTicketTitle(''); // clear form
-                setTicketDescription(''); // clear form
+                setButtonState('success');
+                setTimeout(() => {
+                    setButtonState('idle');
+                    onClose();
+                }, 1000);
                 await onTicketCreated();
-                onClose();
             } else {
                 alert('Failed to create ticket');
             }
@@ -78,7 +84,19 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
                     />
 
                     <div className="form-buttons">
-                        <button type="submit" className="create-submit-button">Submit</button>
+                        <button 
+                            type="submit"  
+                            className={`create-submit-button ${buttonState}`}
+                            disabled={buttonState === 'saving' || buttonState === 'success'}
+                        >
+                            {buttonState === 'idle' && 'Submit'}
+                            {buttonState === 'saving' && (
+                                <div className="spinner"></div>
+                            )}
+                            {buttonState === 'success' && (
+                                <span>&#10003;</span>
+                            )}
+                        </button>
                         <button type="button" className="create-cancel-button" onClick={onClose}>Cancel</button>
                     </div>
                 </form>
