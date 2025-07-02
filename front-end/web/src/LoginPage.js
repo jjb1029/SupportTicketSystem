@@ -53,7 +53,7 @@ function LoginPage() {
       }
       else {
         console.log("Loading tech dashboard");
-        navigate('/Dashboard');
+        navigate('/TechDashboard');
       }
     } catch (error) {
       alert('Error connecting to server');
