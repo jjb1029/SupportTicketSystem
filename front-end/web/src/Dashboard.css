@@ -82,9 +82,12 @@
 .ticket-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    padding-bottom: 10px;
 }
 
 .ticket-card {
+    margin-bottom: 10px;
+    margin-right: 5px;
     background-color: white;
     padding: 20px;
     border-radius: 8px;
@@ -202,4 +205,42 @@
 
 .filter-container select:focus {
     border-color: #007bff;
+}
+
+.filter-pill-bar {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.filter-pill {
+    padding: 10px 20px;
+    border: 1px solid #007bff;
+    border-radius: 9999px;
+    background-color: white;
+    color: #007bff;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-pill:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.filter-pill.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.badge {
+    background-color: #ff4757;
+    color: white;
+    border-radius: 9999px;
+    padding: 2px 8px;
+    font-size: 12px;
+    margin-left: 8px;
 }

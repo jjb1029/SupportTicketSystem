@@ -11,8 +11,9 @@ import "./Skeleton.css";
 function TechDashboard() {
     const [tickets, setTickets] = useState([]);
     const [selectedTicket, setSelectedTicket] = useState(null);
-    const [statusFilter, setStatusFilter] = useState('All');
+    const [statusFilter, setStatusFilter] = useState('ALL');
     const [isLoading, setIsLoading] = useState(true);
+    const [counts, setCounts] = useState({ALL: 0, OPEN: 0, IN_PROGRESS: 0, CLOSED: 0});
     const username = localStorage.getItem('username');
     const role = localStorage.getItem('role');
 
@@ -21,7 +22,7 @@ function TechDashboard() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/tickets/user/${username}`, {
+            const response = await fetch(`http://localhost:8080/api/tickets/status/ALL`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 },
@@ -34,6 +35,14 @@ function TechDashboard() {
             const data = await response.json();
             const loadDuration = Date.now() - loadStart;
             const minimumLoadTime = 1000;
+
+            // counts of each status of tickets
+            setCounts({
+                ALL: data.length,
+                OPEN: data.filter(ticket => ticket.ticketStatus === 'OPEN').length,
+                IN_PROGRESS: data.filter(ticket => ticket.ticketStatus === 'IN_PROGRESS').length,
+                CLOSED: data.filter(ticket => ticket.ticketStatus === 'CLOSED').length,
+            });
 
             if(loadDuration < minimumLoadTime) {
                 // delay for skeleton cards
@@ -52,14 +61,14 @@ function TechDashboard() {
 
     useEffect(() => {
         fetchMyTickets();
-    }, []);
+    }, [statusFilter]);
 
     const handleTicketClick = (ticket) => {
         setSelectedTicket(ticket);
     };
 
     const filteredTickets = tickets.filter((ticket) => {
-        if(statusFilter === 'All') {
+        if(statusFilter === 'ALL') {
             return true;
         }
 
@@ -88,8 +97,68 @@ function TechDashboard() {
                     <button className="logout-button" onClick={handleLogout}>Logout</button>
                 </div>
             </header>
+
+            <div className="filter-bar">
+                <div className="filter-pill-bar">
+                    <button
+                        className={`filter-pill ${statusFilter === 'ALL' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('ALL')}
+                    > All <span className="badge">{counts.ALL}</span>
+                    </button>
+                    <button
+                        className={`filter-pill ${statusFilter === 'OPEN' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('OPEN')}
+                    > Unassigned <span className="badge">{counts.OPEN}</span>
+                    </button>
+                    <button
+                        className={`filter-pill ${statusFilter === 'IN_PROGRESS' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('IN_PROGRESS')}
+                    > In Progress <span className="badge">{counts.IN_PROGRESS}</span>
+                    </button>
+                    <button
+                        className={`filter-pill ${statusFilter === 'CLOSED' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('CLOSED')}
+                    > Closed <span className="badge">{counts.CLOSED}</span>
+                    </button>
+                </div>
+            </div>
+
+            <div className="ticket-card-grid">
+                {isLoading ? (
+                    [...Array(6)].map((_, idx) => (
+                        <SkeletonCard key={idx} />
+                    ))
+                ) : (
+                    filteredTickets.map(ticket => (
+                        <motion.div
+                            key={ticket.ticketNo}
+                            className="ticket-card"
+                            whileHover={{ scale: 1.04 }}
+                            onClick={() => handleTicketClick(ticket)}
+                        >
+                            <div className="ticket-card-header">
+                                <h3>{ticket.ticketTitle}</h3>
+                                <span className={`status-badge ${ticket.ticketStatus.toLowerCase()}`}>
+                                    {ticket.ticketStatus.replace('_', ' ')}
+                                </span>
+                            </div>
+                            <p><strong>Ticket #: </strong> {ticket.ticketNo} </p>
+                            <p><strong>Created: </strong> {new Date(ticket.timeCreated).toLocaleString()} </p>
+                            <p><strong>Assigned to: </strong> {ticket.ticketHandler?.username || 'Unassigned'} </p>
+                        </motion.div>
+                    ))
+                )}
+            </div>
+
+            {selectedTicket && (
+                <TicketDetailsModal
+                    ticket={selectedTicket}
+                    onClose={() => setSelectedTicket(null)}
+                    onTicketUpdate={() => fetchMyTickets()}
+                />
+            )}
         </div>
-    )
+    );
 }
 
 export default TechDashboard;

@@ -76,7 +76,7 @@ public class TicketController {
 	}
 	
 	// GET /api/tickets
-	@GetMapping
+	@GetMapping("/status/ALL")
 	public List<Ticket> getAllTickets() {
 		return ticketRepository.findAll();
 	}

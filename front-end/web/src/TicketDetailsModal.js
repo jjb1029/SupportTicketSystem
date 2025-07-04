@@ -172,8 +172,8 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     };
 
     return (
-        <div className="ticket-modal-overlay">
-            <div className="ticket-modal">
+        <div className="ticket-modal-overlay" onClick={onClose}>
+            <div className="ticket-modal" onClick={(e) => e.stopPropagation()}>
                 <button onClick={onClose} className="ticket-close-button">X</button>
 
                 <h2>Ticket #{currentTicket.ticketNo}</h2>
