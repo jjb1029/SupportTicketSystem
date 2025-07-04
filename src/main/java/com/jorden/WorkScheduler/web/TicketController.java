@@ -1,6 +1,7 @@
 package com.jorden.WorkScheduler.web;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -138,17 +139,20 @@ public class TicketController {
 	
 	// assigning a ticket to a user
 	@PutMapping("/{ticketNo}/assign")
-	public ResponseEntity<?> assignTicketToUser(@PathVariable Long ticketNo, @RequestBody Map<String, String> body) {
-		String username = body.get("username"); // get username from json response
+	public ResponseEntity<?> assignTicketToUser(@PathVariable Long ticketNo, Principal principal) {
+		String username = principal.getName(); // get from jwt securely
 		
 		Optional<User> userOpt = userRepository.findByUsername(username);
 		Optional<Ticket> ticketOpt = ticketRepository.findById(ticketNo);
 		
-		if(ticketOpt.get().getTicketHandler() != null)
-			return ResponseEntity.status(HttpStatus.CONFLICT).body("Ticket is already assigned.");
+		// calling ticketOpt.get() or userOpt.get() before checking can cause NoSuchElementException
+		if(ticketOpt.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found.");
+		}
 		
-		if(userOpt.isEmpty() || ticketOpt.isEmpty())
-			return ResponseEntity.notFound().build();
+		if(userOpt.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+		}
 		
 		Ticket ticket = ticketOpt.get();
 		User user = userOpt.get();
@@ -157,7 +161,10 @@ public class TicketController {
 		ticket.setTicketStatus(TicketStatus.IN_PROGRESS);
 		ticketRepository.save(ticket);
 		
-		return ResponseEntity.ok("Ticket assigned to " + username);
+		Map<String, String> responseBody = new HashMap<>();
+		responseBody.put("message",  "Ticket assigned to " + username);
+		
+		return ResponseEntity.ok(responseBody);
 	}
 	
 	// updating a ticket

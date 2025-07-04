@@ -77,7 +77,7 @@
     background-color: #f9f9f9;
 }
 
-.save-button, .cancel-button, .edit-button {
+.save-button, .cancel-button {
     margin-bottom: 5px;
     margin-right: 5px;
     padding: 8px 16px;
@@ -105,4 +105,61 @@
 
 .cancel-button:hover {
     background-color: #5a6268;
+}
+
+.ticket-action-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.edit-button, .accept-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.accept-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.accept-button:hover {
+    background-color: #218838;
+}
+
+.accept-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.edit-button:hover {
+    background-color: #0056b3
+}
+
+.accept-spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 4s linear infinite;
+    display: inline-block;
+}
+
+@keyframes accept-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.checkmark {
+    font-size: 18px;
+    color: #28a745;
 }

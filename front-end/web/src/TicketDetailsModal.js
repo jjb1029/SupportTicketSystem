@@ -13,6 +13,8 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     const [editedDescription, setEditedDescription] = useState(ticket.ticketDescription);
     const [showEditSection, setShowEditSection] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [isAccepting, setIsAccepting] = useState(false);
+    const [acceptSuccess, setAcceptSuccess] = useState(false);
     const role = localStorage.getItem('role');
     const token = localStorage.getItem('token');
     const userIsCreator = ticket.ticketCreator.username === localStorage.getItem('username');
@@ -30,11 +32,10 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
 
     const handleAcceptTicket = async(e) => {
         e.preventDefault();
-        const username = localStorage.getItem('username');
+        setIsAccepting(true); // visual feedback, spinner start
 
         // check for ticket in local storage
         const token = localStorage.getItem('token');
-
         if(!token) {
             alert("You need to be logged in to accept a ticket.");
             return;
@@ -45,9 +46,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                 method: 'PUT',
                 headers: {
                     'Authorization' : `Bearer ${token}`,
-                    'Content-type' : 'application/json',
                 },
-                body: JSON.stringify({username})
             });
             
             // conflict response - comes from accepting an already assigned ticket
@@ -61,11 +60,19 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                 throw new Error("Failed to assign ticket.");
             }
 
-            alert(`Ticket #${ticket.ticketNo} has been assigned to ${username}`);
-            onTicketUpdate();
-            onClose();
+            // spinner done, show checkmark
+            setIsAccepting(false);
+            setAcceptSuccess(true);
+
+            // leave checkmark for 1 second
+            setTimeout(() => {
+                setAcceptSuccess(false)
+                onTicketUpdate(); // refresh tickets
+                onClose(); // close modal
+            }, 2000);
         } catch(error) {
-            console.log("Error: " + error);
+            console.log("Error: " + error.message);
+            setIsAccepting(false);
             //alert("An error occured while assigning ticket.");
         }
     }
@@ -198,9 +205,35 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                     <p><strong>Created:</strong> {new Date(currentTicket.timeCreated).toLocaleString()}</p>
                     <p><strong>Created by:</strong> {currentTicket.ticketCreator?.username}</p>
                     <p><strong>Assigned to:</strong> {currentTicket.ticketHandler?.username || "Unassigned"}</p>
-                    {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && (
-                        <button onClick={() => setShowEditSection(true)} className="edit-button">Edit</button>
-                    )}
+                    <div className="ticket-action-buttons">
+                        {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && (
+                            <button onClick={() => setShowEditSection(true)} className="edit-button">Edit</button>
+                        )}
+
+                                            
+                        {(userIsTech && !ticket.ticketHandler) && (
+                            <>
+                                {(!isAccepting && !acceptSuccess) && (
+                                    <button
+                                        className="accept-button"
+                                        onClick={handleAcceptTicket}
+                                    >
+                                        Accept Ticket
+                                    </button>
+                                )}
+
+                                {isAccepting && (
+                                    <span className="spinner"></span>
+                                )}
+
+                                {acceptSuccess && (
+                                    <span className="checkmark">✔</span>
+                                )}
+                            </>
+                        )}
+                            
+                    </div>
+
                     <AnimatePresence>
                         {showEditSection && (
                             <motion.div
