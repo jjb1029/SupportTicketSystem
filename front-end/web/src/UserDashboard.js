@@ -4,7 +4,7 @@
 import CreateTicketModal from './CreateTicketModal';
 import TicketDetailsModal from './TicketDetailsModal';
 import React, {useEffect, useState} from "react";
-import {motion} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import "./Dashboard.css";
 import SkeletonCard from "./SkeletonCard.js";
 import "./Skeleton.css";
@@ -12,6 +12,7 @@ import "./Skeleton.css";
 function UserDashboard() {
     const [tickets, setTickets] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [isTicketModalVisible, setIsTicketModalVisible] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [statusFilter, setStatusFilter] = useState('All');
     const [isLoading, setIsLoading] = useState(true);
@@ -94,9 +95,11 @@ function UserDashboard() {
                 </div>
             </header>
 
-            {showCreateModal && (
-                <CreateTicketModal onClose={() => setShowCreateModal(false)} onTicketCreated={fetchMyTickets} />
-            )}
+            <AnimatePresence mode="wait">
+                {showCreateModal && (
+                    <CreateTicketModal onClose={() => setShowCreateModal(false)} onTicketCreated={fetchMyTickets} />
+                )}
+            </AnimatePresence>
 
             <div className="filter-bar">
                 <label htmlFor="statusFilter">Filter by Status:</label>
@@ -138,14 +141,19 @@ function UserDashboard() {
                     ))
                 )}
             </div>
-
-            {selectedTicket && (
-                <TicketDetailsModal
-                    ticket={selectedTicket}
-                    onClose={() => setSelectedTicket(null)}
-                    onTicketUpdate={fetchMyTickets}
-                />
-            )}
+            
+            <AnimatePresence
+                mode="wait"
+                onExitComplete={() => setSelectedTicket(null)}
+            >
+                {selectedTicket && (
+                    <TicketDetailsModal
+                        ticket={selectedTicket}
+                        onClose={() => setSelectedTicket(null)}
+                        onTicketUpdate={fetchMyTickets}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 /*

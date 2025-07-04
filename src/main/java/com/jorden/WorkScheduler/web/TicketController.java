@@ -1,5 +1,6 @@
 package com.jorden.WorkScheduler.web;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -79,6 +80,7 @@ public class TicketController {
 	@GetMapping("/status/ALL")
 	public List<Ticket> getAllTickets() {
 		return ticketRepository.findAll();
+		
 	}
 	
 	// get ticket by ID
@@ -161,13 +163,24 @@ public class TicketController {
 	// updating a ticket
 	@PutMapping("/{ticketNo}/update")
 	@PreAuthorize("hasRole('tech') or @ticketSecurity.isCreator(authentication, #ticketNo)")
-	public ResponseEntity<?> updateTicketDetails(@PathVariable long ticketNo, @RequestBody Ticket updatedTicketData) {
+	public ResponseEntity<?> updateTicketDetails(@PathVariable long ticketNo, @RequestBody Ticket updatedTicketData, Principal principal) {
 		Ticket ticket = ticketRepository.findById(ticketNo).orElse(null);
+		User loggedIn = userRepository.findByUsername(principal.getName()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+		if(ticket == null) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		String loggedInUsername = principal.getName();
+		
+		// extra security. theoretically, a user should not be able to see another users tickets
+		if(!ticket.getTicketCreator().getUsername().equals(loggedInUsername) && loggedIn.getRole() != "tech") {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to edit this ticket.");
+		}
 		
 		ticket.setTicketTitle(updatedTicketData.getTicketTitle());
 		ticket.setTicketDescription(updatedTicketData.getTicketDescription());
-		
 		ticketRepository.save(ticket);
+		
 		return ResponseEntity.ok(ticket);
 	}
 }

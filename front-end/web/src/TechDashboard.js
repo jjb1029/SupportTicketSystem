@@ -3,7 +3,7 @@
 
 import TicketDetailsModal from './TicketDetailsModal';
 import React, {useEffect, useState} from 'react';
-import {motion} from 'framer-motion';
+import {AnimatePresence, motion} from 'framer-motion';
 import "./Dashboard.css";
 import SkeletonCard from "./SkeletonCard.js";
 import "./Skeleton.css";
@@ -11,6 +11,7 @@ import "./Skeleton.css";
 function TechDashboard() {
     const [tickets, setTickets] = useState([]);
     const [selectedTicket, setSelectedTicket] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [isLoading, setIsLoading] = useState(true);
     const [counts, setCounts] = useState({ALL: 0, OPEN: 0, IN_PROGRESS: 0, CLOSED: 0});
@@ -65,7 +66,13 @@ function TechDashboard() {
 
     const handleTicketClick = (ticket) => {
         setSelectedTicket(ticket);
+        setIsModalVisible(true);
     };
+
+    // helps trigger modal fade out
+    const handleCloseModal = () => {
+        setIsModalVisible(false);
+    }
 
     const filteredTickets = tickets.filter((ticket) => {
         if(statusFilter === 'ALL') {
@@ -150,13 +157,18 @@ function TechDashboard() {
                 )}
             </div>
 
-            {selectedTicket && (
-                <TicketDetailsModal
-                    ticket={selectedTicket}
-                    onClose={() => setSelectedTicket(null)}
-                    onTicketUpdate={() => fetchMyTickets()}
-                />
-            )}
+            <AnimatePresence
+                mode="wait"
+                onExitComplete={() => setSelectedTicket(null)} // clears ticket after animation
+            >
+                {isModalVisible && selectedTicket && (
+                    <TicketDetailsModal
+                        ticket={selectedTicket}
+                        onClose={handleCloseModal} // hides modal, the animation will clear ticket
+                        onTicketUpdate={() => fetchMyTickets()}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

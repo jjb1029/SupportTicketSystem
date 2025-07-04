@@ -172,68 +172,84 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     };
 
     return (
-        <div className="ticket-modal-overlay" onClick={onClose}>
-            <div className="ticket-modal" onClick={(e) => e.stopPropagation()}>
-                <button onClick={onClose} className="ticket-close-button">X</button>
+        <motion.div 
+            className="ticket-modal-overlay"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+        >
+            <AnimatePresence>
+                <motion.div 
+                    className="ticket-modal"
+                    onClick={(e) => e.stopPropagation()}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale:  1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                >
+                    <button onClick={onClose} className="ticket-close-button">X</button>
 
-                <h2>Ticket #{currentTicket.ticketNo}</h2>
-                <p><strong>Title:</strong> {currentTicket.ticketTitle}</p>
-                <p><strong>Description:</strong> {currentTicket.ticketDescription}</p>
-                <p><strong>Status:</strong> {currentTicket.ticketStatus}</p>
-                <p><strong>Created:</strong> {new Date(currentTicket.timeCreated).toLocaleString()}</p>
-                <p><strong>Created by:</strong> {currentTicket.ticketCreator?.username}</p>
-                <p><strong>Assigned to:</strong> {currentTicket.ticketHandler?.username || "Unassigned"}</p>
-                {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && (
-                    <button onClick={() => setShowEditSection(true)} className="edit-button">Edit</button>
-                )}
-                <AnimatePresence>
-                    {showEditSection && (
-                        <motion.div
-                            key="edit-section"
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.4, ease: 'easeInOut' }}
-                            onAnimationStart={() => setIsAnimating(true)}
-                            onAnimationComplete={() => setIsAnimating(false)}
-                            className="edit-ticket-section"
-                        >
-                            <EditTicketSection
-                                key={currentTicket.ticketNo}
-                                ticket={currentTicket}
-                                onClose={() => setShowEditSection(false)}
-                                onTicketUpdate={handleTicketUpdate}
-                            />
-                            
-                        </motion.div>
+                    <h2>Ticket #{currentTicket.ticketNo}</h2>
+                    <p><strong>Title:</strong> {currentTicket.ticketTitle}</p>
+                    <p><strong>Description:</strong> {currentTicket.ticketDescription}</p>
+                    <p><strong>Status:</strong> {currentTicket.ticketStatus}</p>
+                    <p><strong>Created:</strong> {new Date(currentTicket.timeCreated).toLocaleString()}</p>
+                    <p><strong>Created by:</strong> {currentTicket.ticketCreator?.username}</p>
+                    <p><strong>Assigned to:</strong> {currentTicket.ticketHandler?.username || "Unassigned"}</p>
+                    {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && (
+                        <button onClick={() => setShowEditSection(true)} className="edit-button">Edit</button>
                     )}
-                </AnimatePresence>
+                    <AnimatePresence>
+                        {showEditSection && (
+                            <motion.div
+                                key="edit-section"
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                                onAnimationStart={() => setIsAnimating(true)}
+                                onAnimationComplete={() => setIsAnimating(false)}
+                                className="edit-ticket-section"
+                            >
+                                <EditTicketSection
+                                    key={currentTicket.ticketNo}
+                                    ticket={currentTicket}
+                                    onClose={() => setShowEditSection(false)}
+                                    onTicketUpdate={handleTicketUpdate}
+                                />
+                                
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                <hr style={{ margin: '20px 0'}} />
+                    <hr style={{ margin: '20px 0'}} />
 
-                <h3>Add Log</h3>
-                <textarea
-                    value={logMessage}
-                    onChange={(e) => setLogMessage(e.target.value)}
-                    placeholder="Leave a log..."
-                    className="ticket-textarea"
-                />
-                <button onClick={handleSubmitLog} className="ticket-submit-button">Submit Log</button>
+                    <h3>Add Log</h3>
+                    <textarea
+                        value={logMessage}
+                        onChange={(e) => setLogMessage(e.target.value)}
+                        placeholder="Leave a log..."
+                        className="ticket-textarea"
+                    />
+                    <button onClick={handleSubmitLog} className="ticket-submit-button">Submit Log</button>
 
-                <h3 style={{ marginTop: '20px' }}>Logs</h3>
-                <div className="ticket-logs-container">
-                    {logs.length === 0 ? (
-                        <p style={{ fontStyle:'italic' }}>No logs yet.</p>
-                    ) : (
-                        logs.map((log) => (
-                        <div key={log.id} className="ticket-log-item">
-                            <p><strong>{log.author?.username || 'Unknown'}:</strong> {log.message} </p>
-                        </div>
-                        ))
-                    )}
-                </div>
-            </div>
-        </div>
+                    <h3 style={{ marginTop: '20px' }}>Logs</h3>
+                    <div className="ticket-logs-container">
+                        {logs.length === 0 ? (
+                            <p style={{ fontStyle:'italic' }}>No logs yet.</p>
+                        ) : (
+                            logs.map((log) => (
+                            <div key={log.id} className="ticket-log-item">
+                                <p><strong>{log.author?.username || 'Unknown'}:</strong> {log.message} </p>
+                            </div>
+                            ))
+                        )}
+                    </div>
+                </motion.div>
+            </AnimatePresence>
+        </motion.div>
     );
 }
 
