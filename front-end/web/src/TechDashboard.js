@@ -15,6 +15,7 @@ function TechDashboard() {
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [isLoading, setIsLoading] = useState(true);
     const [counts, setCounts] = useState({ALL: 0, OPEN: 0, IN_PROGRESS: 0, CLOSED: 0});
+    const [sortOption, setSortOption] = useState('Ticket Number');
     const username = localStorage.getItem('username');
     const role = localStorage.getItem('role');
 
@@ -82,6 +83,28 @@ function TechDashboard() {
         return ticket.ticketStatus === statusFilter;
     });
 
+    let sortedTickets = [...filteredTickets];
+
+    if(sortOption === 'Ticket Number') {
+        sortedTickets.sort((a, b) => a.ticketNo - b.ticketNo);
+    } else if (sortOption === 'Newest') {
+        sortedTickets.sort((a, b) => new Date(b.timeCreated) - new Date(a.timeCreated));
+    } else if (sortOption === 'Oldest') {
+        sortedTickets.sort((a, b) => new Date(a.timeCreated) - new Date(b.timeCreated));
+    } else if (sortOption === 'Tech A-Z') {
+        sortedTickets.sort((a, b) => {
+            const techA = a.ticketHandler?.username || '';
+            const techB = b.ticketHandler?.username || '';
+            return techA.localeCompare(techB);
+        });
+    } else if (sortOption === 'Tech Z-A') {
+        sortedTickets.sort((a, b) => {
+            const techA = a.ticketHandler?.username || '';
+            const techB = b.ticketHandler?.username || '';
+            return techB.localeCompare(techA);
+        });
+    }
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
@@ -127,6 +150,19 @@ function TechDashboard() {
                         onClick={() => setStatusFilter('CLOSED')}
                     > Closed <span className="badge">{counts.CLOSED}</span>
                     </button>
+
+                    <label htmlFor="sortOption">Sort by:</label>
+                    <select
+                        id="sortOption"
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                    >
+                        <option value="Ticket Number">Ticket Number</option>
+                        <option value="Newest">Newest</option>
+                        <option value="Oldest">Oldest</option>
+                        <option value="Tech A-Z">Tech A-Z</option>
+                        <option value="Tech Z-A">Tech Z-A</option>
+                    </select>
                 </div>
             </div>
 
