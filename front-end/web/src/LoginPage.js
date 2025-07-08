@@ -4,6 +4,7 @@
 // If the credentials fail, we let the user know
 
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
@@ -56,7 +57,7 @@ function LoginPage() {
         navigate('/TechDashboard');
       }
     } catch (error) {
-      alert('Error connecting to server');
+      toast.error('Error connecting to server');
       console.error(error);
     }
   };

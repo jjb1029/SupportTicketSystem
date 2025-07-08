@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import "./TicketDetailsModal.css"
-import EditTicketSection from "./EditTicketSection.js"
+import "./TicketDetailsModal.css";
+import { toast } from 'react-toastify';
+import EditTicketSection from "./EditTicketSection.js";
 
 const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     const [currentTicket, setCurrentTicket] = useState(ticket);
@@ -26,7 +27,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
 
     // see if we have token/authorization to view tickets
     if(!token) {
-        alert('You must be logged in to view tickets.');
+        toast.error('You must be logged in to view tickets.');
         return;
     }
 
@@ -37,7 +38,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
         // check for ticket in local storage
         const token = localStorage.getItem('token');
         if(!token) {
-            alert("You need to be logged in to accept a ticket.");
+            toast.error("You need to be logged in to accept a ticket.");
             return;
         }
 
@@ -51,7 +52,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
             
             // conflict response - comes from accepting an already assigned ticket
             if(response.status === 409) {
-                alert("Ticket is already assigned.");
+                toast.error("Ticket is already assigned.");
                 throw new Error("Cannot reassign ticket.");
             }
 
@@ -73,7 +74,6 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
         } catch(error) {
             console.log("Error: " + error.message);
             setIsAccepting(false);
-            //alert("An error occured while assigning ticket.");
         }
     }
 
@@ -85,7 +85,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
         const token = localStorage.getItem('token');
 
         if(!token) {
-            alert("You need to be logged in to view ticket.");
+            toast.error("You need to be logged in to view ticket.");
             return;
         }
 
@@ -106,16 +106,16 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
             // good response
             if(response.ok) {
                 const data = await response.json();
-                alert(`Log added to the ticket log.`);
+                toast.success(`Log added to the ticket log.`);
                 setLogMessage(''); // clear form
                 fetchLogsForTicket();
                 onTicketUpdate();
             } else {
-                alert(`Failed to submit log`);
+                toast.error(`Failed to submit log`);
             }
         } catch(error) {
             console.log('error: ' + error);
-            alert('An error occured while submitting log');
+            toast.error('An error occured while submitting log');
         }
         finally {
             setIsSubmitting(false);

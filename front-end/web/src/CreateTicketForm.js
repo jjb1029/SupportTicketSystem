@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { toaste } from 'react-toastify';
 
 const CreateTicketForm = () => {
     const [ticketDescription, setDescription] = useState(''); // empty state
@@ -11,7 +12,7 @@ const CreateTicketForm = () => {
 
         // if we don't find a token, we know they must be logged in
         if(!token) {
-            alert("You must be logged in");
+            toast.error("You must be logged in");
             return;
         }
 
@@ -31,14 +32,14 @@ const CreateTicketForm = () => {
             // if response worked out - HTTP Status code is ok, we enter
             if(response.ok) {
                 const data = await response.json(); // converts response from backend JSON to JS object and holds Ticket object (TicketNo, Description, Status). asynchronous so we wait
-                alert(`Ticket #${data.ticketNo} created!`); // alerts user ticket was created, uses ticketNo from object
+                toast.success(`Ticket #${data.ticketNo} created!`); // alerts user ticket was created, uses ticketNo from object
                 setDescription(''); // resets the input box after submission, if we didn't have this, description from last ticket would remain
             } else {
-                alert('Failed to create ticket.'); // if response was bad (400, 401, 500), we let user know
+                toast.error('Failed to create ticket.'); // if response was bad (400, 401, 500), we let user know
             }
         } catch(error) { // any error caught we log and display error message
             console.error('Error:', error);
-            alert('An error occurred while creating ticket');
+            toast.error('An error occurred while creating ticket');
         }
     };
 

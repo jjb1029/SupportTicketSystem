@@ -16,6 +16,8 @@ function TechDashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const [counts, setCounts] = useState({ALL: 0, OPEN: 0, IN_PROGRESS: 0, CLOSED: 0});
     const [sortOption, setSortOption] = useState('Ticket Number');
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "false");
     const username = localStorage.getItem('username');
     const role = localStorage.getItem('role');
 
@@ -36,7 +38,7 @@ function TechDashboard() {
 
             const data = await response.json();
             const loadDuration = Date.now() - loadStart;
-            const minimumLoadTime = 1000;
+            const minimumLoadTime = 500;
 
             // counts of each status of tickets
             setCounts({
@@ -105,10 +107,18 @@ function TechDashboard() {
         });
     }
 
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    }
+
+    const toggleDarkMode = () => {
+        const newMode = !darkMode;
+        setDarkMode(newMode);
+        localStorage.setItem("darkMode", newMode.toString());
+    }
+
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('role');
+        localStorage.clear();
         window.location.href = '/';
     };
 
@@ -123,8 +133,21 @@ function TechDashboard() {
                     <span className="welcome-message">Hello, {username}</span>
                 </div>
 
-                <div className="header-right">
-                    <button className="logout-button" onClick={handleLogout}>Logout</button>
+                <div className="header-right" style={{ position: "relative" }}>
+                    <div className="hamburger" onClick={toggleMenu}>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+
+                    {menuOpen && (
+                        <div className="dropdown-menu">
+                            <button onClick={toggleDarkMode}>
+                                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+                            </button>
+                            <button onClick={handleLogout}>🚪 Logout</button>
+                        </div>
+                    )}
                 </div>
             </header>
 
@@ -151,18 +174,20 @@ function TechDashboard() {
                     > Closed <span className="badge">{counts.CLOSED}</span>
                     </button>
 
-                    <label htmlFor="sortOption">Sort by:</label>
-                    <select
-                        id="sortOption"
-                        value={sortOption}
-                        onChange={(e) => setSortOption(e.target.value)}
-                    >
-                        <option value="Ticket Number">Ticket Number</option>
-                        <option value="Newest">Newest</option>
-                        <option value="Oldest">Oldest</option>
-                        <option value="Tech A-Z">Tech A-Z</option>
-                        <option value="Tech Z-A">Tech Z-A</option>
-                    </select>
+                    <div className="sort-container">
+                        <label htmlFor="sortOption">Sort by:</label>
+                        <select
+                            id="sortOption"
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                        >
+                            <option value="Ticket Number">Ticket Number</option>
+                            <option value="Newest">Newest</option>
+                            <option value="Oldest">Oldest</option>
+                            <option value="Tech A-Z">Tech A-Z</option>
+                            <option value="Tech Z-A">Tech Z-A</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -172,7 +197,7 @@ function TechDashboard() {
                         <SkeletonCard key={idx} />
                     ))
                 ) : (
-                    filteredTickets.map(ticket => (
+                    sortedTickets.map(ticket => (
                         <motion.div
                             key={ticket.ticketNo}
                             className="ticket-card"

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import { toast } from 'react-toastify';
 import {motion} from 'framer-motion';
 import "./CreateTicketModal.css";
 
@@ -17,7 +18,7 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
 
         // if we don't find token, we let them know
         if(!token) {
-            alert("You must be logged in to create a ticket.");
+            toast.error("You must be logged in to create a ticket.");
             return;
         }
 
@@ -45,11 +46,11 @@ const CreateTicketModal = ({onClose, onTicketCreated}) => {
                 }, 1000);
                 await onTicketCreated();
             } else {
-                alert('Failed to create ticket');
+                toast.error('Failed to create ticket');
             }
         } catch(error) {
             console.log('Error: ' + error);
-            alert('An error occured while creating ticket');
+            toast.error('An error occured while creating ticket');
         }
     }
 

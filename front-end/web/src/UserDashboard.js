@@ -14,8 +14,12 @@ function UserDashboard() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [isTicketModalVisible, setIsTicketModalVisible] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
-    const [statusFilter, setStatusFilter] = useState('All');
+    const [statusFilter, setStatusFilter] = useState('ALL');
     const [isLoading, setIsLoading] = useState(true);
+    const [counts, setCounts] = useState({ALL: 0, OPEN: 0, IN_PROGRESS: 0, CLOSED: 0});
+    const [sortOption, setSortOption] = useState('Ticket Number');
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "false");
     const username = localStorage.getItem('username');
 
     const fetchMyTickets = async() => {
@@ -34,7 +38,15 @@ function UserDashboard() {
 
             const data = await response.json();
             const loadDuration = Date.now() - loadStart;
-            const minimumLoadTime = 1000;
+            const minimumLoadTime = 500;
+
+            // counts of each status of tickets
+            setCounts({
+                ALL: data.length,
+                OPEN: data.filter(ticket => ticket.ticketStatus === 'OPEN').length,
+                IN_PROGRESS: data.filter(ticket => ticket.ticketStatus === 'IN_PROGRESS').length,
+                CLOSED: data.filter(ticket => ticket.ticketStatus === 'CLOSED').length,
+            });
 
             if(loadDuration < minimumLoadTime) {
                 // delay for skeleton cards
@@ -53,7 +65,7 @@ function UserDashboard() {
 
     useEffect(() => {
         fetchMyTickets();
-    }, []);
+    }, [statusFilter]);
 
     const handleTicketClick = (ticket) => {
         setSelectedTicket(ticket);
@@ -64,17 +76,49 @@ function UserDashboard() {
     }
 
     const filteredTickets = tickets.filter((ticket) => {
-        if(statusFilter === 'All') {
+        if(statusFilter === 'ALL') {
             return true;
         }
 
         return ticket.ticketStatus === statusFilter;
     });
 
+    let sortedTickets = [...filteredTickets];
+
+    if(sortOption === 'Ticket Number') {
+        sortedTickets.sort((a, b) => a.ticketNo - b.ticketNo);
+    } else if (sortOption === 'Newest') {
+        sortedTickets.sort((a, b) => new Date(b.timeCreated) - new Date(a.timeCreated));
+    } else if (sortOption === 'Oldest') {
+        sortedTickets.sort((a, b) => new Date(a.timeCreated) - new Date(b.timeCreated));
+    } else if (sortOption === 'Tech A-Z') {
+        sortedTickets.sort((a, b) => {
+            const techA = a.ticketHandler?.username || '';
+            const techB = b.ticketHandler?.username || '';
+            return techA.localeCompare(techB);
+        });
+    } else if (sortOption === 'Tech Z-A') {
+        sortedTickets.sort((a, b) => {
+            const techA = a.ticketHandler?.username || '';
+            const techB = b.ticketHandler?.username || '';
+            return techB.localeCompare(techA);
+        });
+    }
+
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
+    }
+
+    const toggleDarkMode = () => {
+        const newMode = !darkMode;
+        setDarkMode(newMode);
+        localStorage.setItem("darkMode", newMode.toString());
+
+        document.body.classList.toggle("dark-mode", newMode);
+    }
+
     const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('role');
+        localStorage.clear();
         window.location.href = '/'; // login
     }
 
@@ -90,8 +134,21 @@ function UserDashboard() {
                     <span className="welcome-message">Hello, {username}</span>
                 </div>
 
-                <div className="header-right">
-                    <button className="logout-button" onClick={handleLogout}>Logout</button>
+                <div className="header-right" style={{ position: "relative" }}>
+                    <div className="hamburger" onClick={toggleMenu}>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+
+                    {menuOpen && (
+                        <div className="dropdown-menu">
+                            <button onClick={toggleDarkMode}>
+                                {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+                            </button>
+                            <button onClick={handleLogout}>🚪 Logout</button>
+                        </div>
+                    )}
                 </div>
             </header>
 
@@ -102,17 +159,43 @@ function UserDashboard() {
             </AnimatePresence>
 
             <div className="filter-bar">
-                <label htmlFor="statusFilter">Filter by Status:</label>
-                <select
-                    id="statusFilter"
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                    <option value="All">All</option>
-                    <option value="UNASSIGNED">Unassigned</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="COMPLETED">Completed</option>
-                </select>
+                <div className="filter-pill-bar">
+                    <button
+                        className={`filter-pill ${statusFilter === 'ALL' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('ALL')}
+                    > All <span className="badge">{counts.ALL}</span>
+                    </button>
+                    <button
+                        className={`filter-pill ${statusFilter === 'OPEN' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('OPEN')}
+                    > Unassigned <span className="badge">{counts.OPEN}</span>
+                    </button>
+                    <button
+                        className={`filter-pill ${statusFilter === 'IN_PROGRESS' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('IN_PROGRESS')}
+                    > In Progress <span className="badge">{counts.IN_PROGRESS}</span>
+                    </button>
+                    <button
+                        className={`filter-pill ${statusFilter === 'CLOSED' ? 'active' : ''}`}
+                        onClick={() => setStatusFilter('CLOSED')}
+                    > Closed <span className="badge">{counts.CLOSED}</span>
+                    </button>
+
+                    <div className="sort-container">
+                        <label htmlFor="sortOption">Sort by:</label>
+                        <select
+                            id="sortOption"
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                        >
+                            <option value="Ticket Number">Ticket Number</option>
+                            <option value="Newest">Newest</option>
+                            <option value="Oldest">Oldest</option>
+                            <option value="Tech A-Z">Tech A-Z</option>
+                            <option value="Tech Z-A">Tech Z-A</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div className="ticket-card-grid">
@@ -120,8 +203,12 @@ function UserDashboard() {
                     [...Array(6)].map((_, idx) => (
                         <SkeletonCard key={idx} />
                     ))
+                ) : sortedTickets.length === 0 ? (
+                    <div className="empty-state">
+                        <p> ✨ No tickets to show right now. Time to relax! ✨ </p>
+                    </div>
                 ) : (
-                    filteredTickets.map(ticket => (
+                    sortedTickets.map(ticket => (
                         <motion.div
                             key={ticket.ticketNo}
                             className="ticket-card"
