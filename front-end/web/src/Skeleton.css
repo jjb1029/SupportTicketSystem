@@ -7,6 +7,10 @@
     height: 150px;
 }
 
+.dark-mode .skeleton-card {
+    background-color: #1e1e1e;
+}
+
 .skeleton-title {
     width: 60%;
     height: 20px;

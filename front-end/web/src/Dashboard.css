@@ -92,6 +92,16 @@ body.dark-mode .logout-button {
     font-weight: 500;
 }
 
+.dark-mode .create-ticket-button {
+    background-color: #2e7d32;
+    color: #fff;
+    border: none;
+}
+
+.dark-mode .create-ticket-button:hover {
+    background-color: #388e3c;
+}
+
 .create-ticket-button {
     background-color: #28a745;
     color: white;
@@ -366,6 +376,10 @@ body.dark-mode .dropdown-menu {
 
 body.dark-mode .dropdown-menu button:hover {
     background-color: #444;
+}
+
+body.dark-mode .dropdown-menu button {
+    color: #eee;
 }
 
 .dropdown-menu button {
