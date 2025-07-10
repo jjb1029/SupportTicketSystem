@@ -1,15 +1,20 @@
+body, .dashboard-wrapper {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 body.dark-mode {
     background-color: #121212;
     color: #e0e0e0;
 }
 
 body.dark-mode * {
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.dark-mode .dashboard-wrapper {
     background-color: #1e1e1e;
     color: #e0e0e0;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.dark-mode .dashboard-header {
@@ -147,6 +152,15 @@ body.dark-mode .logout-button {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.dark-mode .sort-option-active {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+.dark-mode .sort-option-active .sort-option:hover {
+    background-color: red;
 }
 
 .ticket-card-grid {
@@ -298,6 +312,12 @@ body.dark-mode .status-badge {
     margin: 10px 0;
 }
 
+.dark-mode .filter-pill {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
 .filter-pill {
     padding: 10px 20px;
     border: 1px solid #007bff;
@@ -316,9 +336,22 @@ body.dark-mode .status-badge {
     color: white;
 }
 
+.dark-mode .filter-pill:hover {
+    background-color: #024185;
+    color: #e0e0e0;
+}
+
+.dark-mode .filter-pill.active {
+    background-color: #024185;
+    color: #e0e0e0;
+}
 .filter-pill.active {
     background-color: #007bff;
     color: white;
+}
+
+.dark-mode .badge {
+    background-color: #9b242e;
 }
 
 .badge {
@@ -351,15 +384,19 @@ body.dark-mode .status-badge {
 
 .hamburger div {
     height: 3px;
-    background: #333;
+    background: white;
     border-radius: 2px;
     transition: 0.3s ease;
+}
+
+.dark-mode .hamburger div {
+    background: #e0e0e0;
 }
 
 .dropdown-menu {
     position: absolute;
     top: 60px;
-    right: 1rem;
+    right: 0;
     background: white;
     border: 1px solid #ddd;
     border-radius: 6px;

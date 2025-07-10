@@ -3,7 +3,7 @@
 
 import CreateTicketModal from './CreateTicketModal';
 import TicketDetailsModal from './TicketDetailsModal';
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {AnimatePresence, motion} from 'framer-motion';
 import "./Dashboard.css";
 import SkeletonCard from "./SkeletonCard.js";
@@ -184,11 +184,12 @@ function UserDashboard() {
                     <div className="sort-container">
                         <label htmlFor="sortOption">Sort by:</label>
                         <select
+                            className="sort-option-active"
                             id="sortOption"
                             value={sortOption}
                             onChange={(e) => setSortOption(e.target.value)}
                         >
-                            <option value="Ticket Number">Ticket Number</option>
+                            <option className="sort-option" value="Ticket Number">Ticket Number</option>
                             <option value="Newest">Newest</option>
                             <option value="Oldest">Oldest</option>
                             <option value="Tech A-Z">Tech A-Z</option>
