@@ -99,14 +99,16 @@ public class TicketController {
 	
 	// update ticket status
 	@PutMapping("/{id}/status")
-	public Ticket updateTicketStatus(@PathVariable long id, @RequestBody TicketStatus newStatus) {
-		Ticket ticket = ticketRepository.findById(id).orElse(null);
-		if(ticket != null) {
-			ticket.setTicketStatus(newStatus);
-			return ticketRepository.save(ticket);
-		}
+	public ResponseEntity<?> updateTicketStatus(@PathVariable long id, @RequestBody TicketStatus newStatus) {
+		Optional<Ticket> ticketOpt = ticketRepository.findById(id);
+		if(ticketOpt.isEmpty())
+			return ResponseEntity.notFound().build();
 		
-		return null;
+		Ticket ticket = ticketOpt.get();
+		ticket.setTicketStatus(newStatus);
+		ticketRepository.save(ticket);
+		
+		return ResponseEntity.ok("Status updated.");
 	}
 	
 	// get tickets with a certain status (open, in progress, closed)

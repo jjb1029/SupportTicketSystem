@@ -19,7 +19,6 @@ function TechDashboard() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "false");
     const username = localStorage.getItem('username');
-    const role = localStorage.getItem('role');
 
     const fetchMyTickets = async() => {
         const loadStart = Date.now(); // start timer for skeleton card
@@ -115,6 +114,8 @@ function TechDashboard() {
         const newMode = !darkMode;
         setDarkMode(newMode);
         localStorage.setItem("darkMode", newMode.toString());
+
+        document.body.classList.toggle("dark-mode", newMode);
     }
 
     const handleLogout = () => {

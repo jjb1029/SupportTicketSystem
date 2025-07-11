@@ -8,6 +8,10 @@
     z-index: 1000;
 }
 
+.dark-mode .create-ticket-modal {
+    background-color: #2a2a2a;
+}
+
 .create-ticket-modal {
     background-color: #fff;
     padding: 30px;
@@ -41,6 +45,10 @@
     justify-content: space-between;
     gap: 15px;
     margin-top: 20px;
+}
+
+.dark-mode .create-submit-button {
+    background-color: #1d7731;
 }
 
 .create-submit-button, .create-cancel-button {
@@ -77,6 +85,15 @@
 
 .create-submit-button:hover {
     background-color: #218838;
+}
+
+.dark-mode .create-cancel-button {
+    background-color: #636262;
+    color: #e0e0e0;
+}
+
+.dark-mode .create-cancel-button:hover {
+    background-color: #858383;
 }
 
 .create-cancel-button {

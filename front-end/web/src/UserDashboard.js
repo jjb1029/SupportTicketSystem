@@ -3,7 +3,7 @@
 
 import CreateTicketModal from './CreateTicketModal';
 import TicketDetailsModal from './TicketDetailsModal';
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState } from "react";
 import {AnimatePresence, motion} from 'framer-motion';
 import "./Dashboard.css";
 import SkeletonCard from "./SkeletonCard.js";
@@ -12,7 +12,6 @@ import "./Skeleton.css";
 function UserDashboard() {
     const [tickets, setTickets] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [isTicketModalVisible, setIsTicketModalVisible] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [isLoading, setIsLoading] = useState(true);
@@ -70,10 +69,6 @@ function UserDashboard() {
     const handleTicketClick = (ticket) => {
         setSelectedTicket(ticket);
     };
-
-    const formatStatus = (status) => {
-        return status === "IN_PROGRESS" ? "IN PROGRESS" : status;
-    }
 
     const filteredTickets = tickets.filter((ticket) => {
         if(statusFilter === 'ALL') {

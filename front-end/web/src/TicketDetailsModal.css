@@ -8,6 +8,11 @@
     z-index: 1000;
 }
 
+.dark-mode .ticket-modal {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
 .ticket-modal {
     background-color: #fff;
     padding: 30px;
@@ -30,6 +35,10 @@
     color: #666;
 }
 
+.dark-mode .ticket-textarea {
+    background-color: #b4b4b4;
+}
+
 .ticket-textarea {
     width: 100%;
     height: 80px;
@@ -40,6 +49,14 @@
     resize: vertical;
 }
 
+.dark-mode .ticket-submit-button {
+    background-color: #024791;
+}
+
+.dark-mode .ticket-submit-button:hover {
+    background-color: #0155af;
+}
+
 .ticket-submit-button {
     background-color: #007bff;
     color: white;
@@ -47,6 +64,10 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.dark-mode .ticket-logs-container {
+    background-color: #2a2a2a;
 }
 
 .ticket-logs-container {
@@ -69,12 +90,25 @@
     color: #888;
 }
 
+.dark-mode .edit-ticket-section {
+    background-color: #b7b7b7;
+    color: #fffdfd;
+}
+
 .edit-ticket-section {
     /*margin-top: 20px;*/
     padding-left: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
+}
+
+.dark-mode .save-button {
+    background-color: #024791;
+}
+
+.dark-mode .save-button:hover {
+    background-color: #0155af;
 }
 
 .save-button, .cancel-button {
@@ -114,7 +148,15 @@
     margin-top: 15px;
 }
 
-.edit-button, .accept-button {
+.dark-mode .edit-button {
+    background-color: #024791;
+}
+
+.dark-mode .accept-ticket-button {
+    background-color: #024791;
+}
+
+.edit-button, .accept-ticket-button {
     padding: 8px 16px;
     border: none;
     border-radius: 5px;
@@ -126,22 +168,47 @@
     color: white;
 }
 
-.accept-button {
+.accept-ticket-button {
     background-color: #28a745;
     color: white;
 }
 
-.accept-button:hover {
+.accept-ticket-button:hover {
     background-color: #218838;
 }
 
-.accept-button:disabled {
+.dark-mode .accept-ticket-button:hover {
+    background-color: #0155af;
+}
+
+.accept-ticket-button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
 }
 
 .edit-button:hover {
     background-color: #0056b3
+}
+
+.complete-ticket-button {
+    background-color: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dark-mode .complete-ticket-button {
+    background-color: #155f26;
+}
+
+.complete-ticket-button:hover {
+    background-color: #208137;
+}
+
+.dark-mode .complete-ticket-button:hover {
+    background-color: #1a7730;
 }
 
 .accept-spinner {
@@ -162,4 +229,8 @@
 .checkmark {
     font-size: 18px;
     color: #28a745;
+}
+
+.dark-mode .checkmark {
+    color: #1b6e2e;
 }

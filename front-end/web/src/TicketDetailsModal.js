@@ -16,7 +16,8 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     const [isAnimating, setIsAnimating] = useState(false);
     const [isAccepting, setIsAccepting] = useState(false);
     const [acceptSuccess, setAcceptSuccess] = useState(false);
-    const role = localStorage.getItem('role');
+    const [isMarkingDone, setIsMarkingDone] = useState(false); 
+    const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
     const userIsCreator = ticket.ticketCreator.username === localStorage.getItem('username');
     const userIsTech = localStorage.getItem('role') === 'tech';
@@ -105,7 +106,6 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
 
             // good response
             if(response.ok) {
-                const data = await response.json();
                 toast.success(`Log added to the ticket log.`);
                 setLogMessage(''); // clear form
                 fetchLogsForTicket();
@@ -173,6 +173,34 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
         }
     }
 
+    const handleMarkAsCompleted = async () => {
+        setIsMarkingDone(true);
+        
+        try {
+            const response = await fetch(`http://localhost:8080/api/tickets/${ticket.ticketNo}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify("CLOSED"),
+            });
+
+            if(!response.ok) {
+                throw new Error("Failed to update status");
+            }
+
+            toast.success(`Ticket #${ticket.ticketNo} marked as completed.`);
+            onTicketUpdate();
+            onClose();
+        } catch (err) {
+            toast.error("Error updating ticket status.");
+            console.log(err);
+        } finally {
+            setIsMarkingDone(false);
+        }
+    }
+
     const handleTicketUpdate = (updatedTicket) => {
         setCurrentTicket(updatedTicket); // updates modal with new information from editing
         onTicketUpdate(); // updates list also
@@ -215,7 +243,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                             <>
                                 {(!isAccepting && !acceptSuccess) && (
                                     <button
-                                        className="accept-button"
+                                        className="accept-ticket-button"
                                         onClick={handleAcceptTicket}
                                     >
                                         Accept Ticket
@@ -229,6 +257,18 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                                 {acceptSuccess && (
                                     <span className="checkmark">✔</span>
                                 )}
+                            </>
+                        )}
+
+                        {(userIsTech && ticket.ticketHandler.username === username && ticket.ticketStatus !== 'CLOSED') && (
+                            <>
+                                <button
+                                    className="complete-ticket-button"
+                                    onClick={handleMarkAsCompleted}
+                                    disabled={isMarkingDone}
+                                >
+                                    {isMarkingDone ? "Updating..." : "Mark as Completed"}
+                                </button>
                             </>
                         )}
                             
