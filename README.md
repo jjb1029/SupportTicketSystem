@@ -51,12 +51,12 @@ A full-stack support ticket management system that allows users to create and tr
 - MySQL running locally
 
 ### Backend Setup
-bash
-cd support-ticket-backend
-Add your database credentials in application.properties
+bash <br>
+cd support-ticket-backend <br>
+Add your database credentials in application.properties<br> 
 mvn spring-boot:run
 
 ### Frontend Setup
-cd support-ticket-frontend
-npm install
+cd support-ticket-frontend <br>
+npm install <br>
 npm start
