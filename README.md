@@ -14,7 +14,7 @@ A full-stack support ticket management system that allows users to create and tr
 - View ticket status in a clean dashboard
 - Dark mode support
 
-### 🛠️ Techs
+### Techs
 - View all tickets in the system
 - Accept unassigned tickets
 - Leave comments on tickets
@@ -56,7 +56,7 @@ cd support-ticket-backend
 # Add your database credentials in application.properties
 mvn spring-boot:run
 
-*### Frontend Setup*
+```### Frontend Setup
 cd support-ticket-frontend
 npm install
 npm start
