@@ -54,9 +54,9 @@ A full-stack support ticket management system that allows users to create and tr
 ```bash
 cd support-ticket-backend
 # Add your database credentials in application.properties
-mvn spring-boot:run
+mvn spring-boot:run```
 
-```### Frontend Setup
-cd support-ticket-frontend
+### Frontend Setup
+```cd support-ticket-frontend
 npm install
-npm start
+npm start```
