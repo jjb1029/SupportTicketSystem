@@ -60,3 +60,8 @@ mvn spring-boot:run
 cd support-ticket-frontend <br>
 npm install <br>
 npm start
+
+---
+
+### application-sample.properties
+You will need to enter your DB credentials and your JWT secret into your own appliation.properties file
