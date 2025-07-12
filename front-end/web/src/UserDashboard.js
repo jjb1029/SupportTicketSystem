@@ -3,7 +3,7 @@
 
 import CreateTicketModal from './CreateTicketModal';
 import TicketDetailsModal from './TicketDetailsModal';
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {AnimatePresence, motion} from 'framer-motion';
 import "./Dashboard.css";
 import SkeletonCard from "./SkeletonCard.js";
@@ -19,6 +19,7 @@ function UserDashboard() {
     const [sortOption, setSortOption] = useState('Ticket Number');
     const [menuOpen, setMenuOpen] = useState(false);
     const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "false");
+    const hamburgerRef = useRef();
     const username = localStorage.getItem('username');
 
     const fetchMyTickets = async() => {
@@ -104,6 +105,22 @@ function UserDashboard() {
         setMenuOpen(!menuOpen);
     }
 
+    useEffect(() => {
+        const handleOutsideClick = (e) => {
+            if(hamburgerRef.current && ! hamburgerRef.current.contains(e.target)) {
+                setMenuOpen(false);
+            }
+        };
+
+        if(menuOpen) {
+            document.addEventListener('mousedown', handleOutsideClick);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, [menuOpen]);
+
     const toggleDarkMode = () => {
         const newMode = !darkMode;
         setDarkMode(newMode);
@@ -129,7 +146,7 @@ function UserDashboard() {
                     <span className="welcome-message">Hello, {username}</span>
                 </div>
 
-                <div className="header-right" style={{ position: "relative" }}>
+                <div className="header-right" style={{ position: "relative" }} ref={hamburgerRef}>
                     <div className="hamburger" onClick={toggleMenu}>
                         <div></div>
                         <div></div>
