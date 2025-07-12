@@ -53,7 +53,7 @@ A full-stack support ticket management system that allows users to create and tr
 ### Backend Setup
 bash
 cd support-ticket-backend
-# Add your database credentials in application.properties
+Add your database credentials in application.properties
 mvn spring-boot:run
 
 ### Frontend Setup
