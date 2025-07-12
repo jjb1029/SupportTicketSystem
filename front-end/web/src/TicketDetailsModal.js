@@ -7,11 +7,7 @@ import EditTicketSection from "./EditTicketSection.js";
 const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
     const [currentTicket, setCurrentTicket] = useState(ticket);
     const [logMessage, setLogMessage] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [logs, setLogs] = useState([]);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedTitle, setEditedTitle] = useState(ticket.ticketTitle);
-    const [editedDescription, setEditedDescription] = useState(ticket.ticketDescription);
     const [showEditSection, setShowEditSection] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isAccepting, setIsAccepting] = useState(false);
@@ -80,7 +76,6 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
 
     const handleSubmitLog = async(e) => {
         e.preventDefault();
-        setIsSubmitting(true);
 
         const username = localStorage.getItem('username');
         const token = localStorage.getItem('token');
@@ -118,7 +113,6 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
             toast.error('An error occured while submitting log');
         }
         finally {
-            setIsSubmitting(false);
         }
     }
 
@@ -142,34 +136,6 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
             setLogs(data);
         } catch(error) {
             console.error("Error fetching logs: " + error);
-        }
-    }
-
-    const handleSaveChanges = async() => {
-        try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:8080/api/tickets/${ticket.ticketNo}/update`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    ticketTitle: editedTitle,
-                    ticketDescription: editedDescription
-                }),
-            });
-
-            if(!response.ok) {
-                throw new Error("Update failed.");
-            }
-            console.log("ticket description: " + editedDescription);
-            console.log("ticket title: " + editedTitle);
-            setIsEditing(false);
-            onTicketUpdate();
-            onClose();
-        } catch (err) {
-            console.error("Error updating ticket: ", err);
         }
     }
 
@@ -234,7 +200,8 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                     <p><strong>Created by:</strong> {currentTicket.ticketCreator?.username}</p>
                     <p><strong>Assigned to:</strong> {currentTicket.ticketHandler?.username || "Unassigned"}</p>
                     <div className="ticket-action-buttons">
-                        {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && (
+                        {((userIsCreator || userIsTech) && (showEditSection === false) && !(isAnimating)) && 
+                                ticket.ticketStatus !== 'CLOSED' && (
                             <button onClick={() => setShowEditSection(true)} className="edit-button">Edit</button>
                         )}
 
@@ -260,7 +227,7 @@ const TicketDetailsModal = ({ ticket, onClose, onTicketUpdate}) => {
                             </>
                         )}
 
-                        {(userIsTech && ticket.ticketHandler.username === username && ticket.ticketStatus !== 'CLOSED') && (
+                        {(userIsTech && ticket.ticketHandler?.username === username && ticket.ticketStatus !== 'CLOSED') && (
                             <>
                                 <button
                                     className="complete-ticket-button"

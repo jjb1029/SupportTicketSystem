@@ -132,7 +132,7 @@ function LoginPage() {
             Login
           </button>
           <p style={{ marginTop: '10px' }}>
-            Don't have an account? <a href="#">Sign up here</a>
+            Don't have an account? <a href="/Signup">Sign up here</a>
           </p>
         </form>
         {showPopup && (

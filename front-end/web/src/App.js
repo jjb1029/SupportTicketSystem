@@ -2,7 +2,7 @@ import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './LoginPage';
-import Dashboard from './Dashboard';
+import SignupPage from './Signup';
 import TechDashboard from './TechDashboard';
 import UserDashboard from './UserDashboard';
 import PrivateRoute from './PrivateRoute';
@@ -11,6 +11,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/signup" element={<SignupPage />} />
         <Route path = "/" element  = {<LoginPage />} />
         <Route path = "/TechDashboard" 
           element = {

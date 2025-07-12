@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jorden.WorkScheduler.User;
 import com.jorden.WorkScheduler.dto.AuthCredentialsRequest;
+import com.jorden.WorkScheduler.repository.UserRepository;
+import com.jorden.WorkScheduler.util.CustomPasswordEncoder;
 import com.jorden.WorkScheduler.util.JwtUtil;
 
 @RestController
@@ -30,6 +32,12 @@ public class AuthController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private CustomPasswordEncoder cpe;
 		
 	@Autowired
 	private JwtUtil jwtUtil;
@@ -51,4 +59,28 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
+	
+	@PostMapping("/signup")
+	public ResponseEntity<?> signup(@RequestBody Map<String, String> body) {
+		String username = body.get("username");
+		String password = body.get("password");
+		String role = body.get("role");
+		String firstName = body.get("firstName");
+		String lastName = body.get("lastName");
+		
+		if(userRepository.findByUsername(username).isPresent()) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists.");
+		}
+		
+		//User newUser = new User();
+		User newUser = new User(firstName, lastName, null, role, username);
+		//newUser.setUsername(username);
+		System.out.println("Password encoded " + password + " as " + cpe.getPasswordEncoder().encode(password));
+		newUser.setPassword(cpe.getPasswordEncoder().encode(password));
+		//newUser.setRole(role);
+		userRepository.save(newUser);
+		
+		return ResponseEntity.ok("User created.");
+	}
+	
 }

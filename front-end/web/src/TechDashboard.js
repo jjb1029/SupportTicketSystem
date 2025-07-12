@@ -43,7 +43,7 @@ function TechDashboard() {
             setCounts({
                 ALL: data.length,
                 OPEN: data.filter(ticket => ticket.ticketStatus === 'OPEN').length,
-                IN_PROGRESS: data.filter(ticket => ticket.ticketStatus === 'IN_PROGRESS').length,
+                IN_PROGRESS: data.filter(ticket => ticket.ticketStatus === 'IN_PROGRESS' && ticket.ticketHandler?.username === username).length,
                 CLOSED: data.filter(ticket => ticket.ticketStatus === 'CLOSED').length,
             });
 
@@ -79,6 +79,10 @@ function TechDashboard() {
     const filteredTickets = tickets.filter((ticket) => {
         if(statusFilter === 'ALL') {
             return true;
+        }
+
+        if(statusFilter === 'IN_PROGRESS') {
+            return ticket.ticketStatus === 'IN_PROGRESS' && ticket.ticketHandler?.username === username;
         }
 
         return ticket.ticketStatus === statusFilter;
@@ -167,7 +171,7 @@ function TechDashboard() {
                     <button
                         className={`filter-pill ${statusFilter === 'IN_PROGRESS' ? 'active' : ''}`}
                         onClick={() => setStatusFilter('IN_PROGRESS')}
-                    > In Progress <span className="badge">{counts.IN_PROGRESS}</span>
+                    > My In Progress <span className="badge">{counts.IN_PROGRESS}</span>
                     </button>
                     <button
                         className={`filter-pill ${statusFilter === 'CLOSED' ? 'active' : ''}`}
